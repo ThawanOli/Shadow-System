@@ -1,0 +1,30 @@
+[
+    {
+        "titulo": "Treino de For\u00e7a (Ectomorfo em Casa)",
+        "rank": "C",
+        "xp_recompensa": 40,
+        "atributo_alvo": "For\u00e7a",
+        "concluida": false
+    },
+    {
+        "titulo": "Revis\u00e3o de Vocabul\u00e1rio",
+        "rank": "D",
+        "xp_recompensa": 25,
+        "atributo_alvo": "Intelig\u00eancia",
+        "concluida": false
+    },
+    {
+        "titulo": "Avan\u00e7ar no projeto de Python",
+        "rank": "B",
+        "xp_recompensa": 60,
+        "atributo_alvo": "Intelig\u00eancia",
+        "concluida": false
+    },
+    {
+        "titulo": "Estudar Finan\u00e7as",
+        "rank": "SSS",
+        "xp_recompensa": 100,
+        "atributo_alvo": "Intelig\u00eancia",
+        "concluida": false
+    }
+]

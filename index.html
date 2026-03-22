@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow System: Arise</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="system-container">
+        <div class="status-panel system-window">
+            <h1 class="window-title">STATUS DO JOGADOR</h1>
+
+            <div class="player-info">
+                <h2>Nome: <span class="highlight">Imperador das Rosas Azuis</span></h2>
+                <h2>Nível: <span class="highlight" id="player-level">1</span></h2>
+            </div>
+
+            <div class="bars-container">
+                <div class="bar-label">HP: 100/100</div>
+                <div class="bar-bg"><div class="bar-fill hp-fill" style="width: 100%;"></div></div>
+
+                <div class="bar-label">MP: 100/100</div>
+                <div class="bar-bg"><div class="bar-fill mp-fill" style="width: 100%;"></div></div>
+
+                <div class="bar-label" id="xp-text">XP: 0/100</div>
+                <div class="bar-bg"><div class="bar-fill xp-fill" id="xp-bar" style="width: 0%;"></div></div>
+            </div>
+
+            <div class="attributes-panel">
+                <h3>ÁRVORE DE ATRIBUTOS</h3>
+                <ul>
+                    <li>Força: <span class="attr-val" id="attr-forca">1</span></li>
+                    <li>Inteligência: <span class="attr-val" id="attr-inteligencia">1</span></li>
+                    <li>Agilidade: <span class="attr-val" id="attr-agilidade">1</span></li>
+                    <li>Vitalidade: <span class="attr-val" id="attr-vitalidade">1</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quest-panel system-window">
+            <h1 class="window-title">MISSÕES DIÁRIAS</h1>
+
+            <div class="quest-list">
+                <div class="quest-card">
+                    <div class="quest-info">
+                        <h3>[C] Treino de Força</h3>
+                        <p>Recompensa: 40 XP | Evolui: Força</p>
+                    </div>
+                    <button id="btn-treino_forca" class="btn-complete" onclick="completarMissao('treino_forca', 40, 'forca', this)">Completar</button>
+                </div>
+
+                <div class="quest-card">
+                    <div class="quest-info">
+                        <h3>[C] Treino de Agilidade</h3>
+                        <p>Recompensa: 40 XP | Evolui: Agilidade</p>
+                    </div>
+                    <button id="btn-treino_agilidade" class="btn-complete" onclick="completarMissao('treino_agilidade', 40, 'agilidade', this)">Completar</button>
+                </div>
+
+                <div class="quest-card">
+                    <div class="quest-info">
+                    <h3>[B] Controle da Alimentação e Mente</h3>
+                    <p>Recompensa: 50 XP | Evolui: Vitalidade</p>
+                    </div>
+                    <button id="btn-controle_mente" class="btn-complete" onclick="completarMissao('controle_mente', 60, 'vitalidade', this)">Completar</button>
+                </div>
+
+                <div class="quest-card">
+                    <div class="quest-info">
+                        <h3>[B] Avançar no projeto de Python</h3>
+                        <p>Recompensa: 60 XP | Evolui: Inteligência</p>
+                    </div>
+                    <button id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 'inteligencia', this)">Completar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

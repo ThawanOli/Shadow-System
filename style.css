@@ -1,0 +1,155 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+body {
+    background-color: #050505; /* Escuridão total */
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* Um leve fundo escuro azulado para dar a vibe do anime */
+    background-image: radial-gradient(circle at center, #0a1128 0%, #000000 100%);
+}
+
+.system-container {
+    display: flex;
+    gap: 30px;
+    width: 90%;
+    max-width: 1200px;
+}
+
+/* O Estilo Padrão das Janelas do Sistema */
+.system-window {
+    background: rgba(0, 15, 30, 0.7); /* Azul muito escuro e transparente */
+    border: 2px solid #00d2ff; /* Borda neon */
+    border-radius: 5px;
+    padding: 25px;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3), inset 0 0 20px rgba(0, 210, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.status-panel {
+    flex: 1;
+}
+
+.quest-panel {
+    flex: 2;
+}
+
+.window-title {
+    color: #00d2ff;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #00d2ff;
+    padding-bottom: 10px;
+    text-shadow: 0 0 8px rgba(0, 210, 255, 0.6);
+}
+
+.highlight {
+    color: #00d2ff;
+}
+
+/* Estilização das Barras (HP, MP, XP) */
+.bars-container {
+    margin: 20px 0;
+}
+
+.bar-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.bar-bg {
+    width: 100%;
+    height: 15px;
+    background-color: #222;
+    border: 1px solid #444;
+    margin-bottom: 15px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    transition: width 0.5s ease-in-out;
+}
+
+.hp-fill { background-color: #ff3333; box-shadow: 0 0 10px #ff3333; }
+.mp-fill { background-color: #3388ff; box-shadow: 0 0 10px #3388ff; }
+.xp-fill { background-color: #ffcc00; box-shadow: 0 0 10px #ffcc00; }
+
+/* Atributos */
+.attributes-panel ul {
+    list-style: none;
+    margin-top: 10px;
+}
+
+.attributes-panel li {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.attr-val {
+    color: #00d2ff;
+    font-weight: bold;
+}
+
+/* Cartões de Missão */
+.quest-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.quest-card {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #005588;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.quest-card:hover {
+    border-color: #00d2ff;
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+}
+
+.quest-info h3 {
+    color: #e0e0e0;
+    margin-bottom: 5px;
+}
+
+.quest-info p {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* O Botão de Completar */
+.btn-complete {
+    background: transparent;
+    color: #00d2ff;
+    border: 1px solid #00d2ff;
+    padding: 8px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.btn-complete:hover {
+    background: #00d2ff;
+    color: #000;
+    box-shadow: 0 0 15px #00d2ff;
+}

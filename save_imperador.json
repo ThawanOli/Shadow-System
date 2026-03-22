@@ -1,0 +1,13 @@
+{
+    "nome": "Imperador das Sombras Azuis",
+    "nivel": 3,
+    "xp_atual": 45,
+    "xp_necessario": 225,
+    "hp": 100,
+    "atributos": {
+        "For\u00e7a": 5,
+        "Intelig\u00eancia": 9,
+        "Agilidade": 5,
+        "Vitalidade": 5
+    }
+}
