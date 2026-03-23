@@ -16,6 +16,7 @@
             <div class="player-info">
                 <h2>Nome: <span class="highlight">Imperador das Rosas Azuis</span></h2>
                 <h2>Nível: <span class="highlight" id="player-level">1</span></h2>
+                <h2>Ouro: <span class="highlight" id="player-ouro">0</span>💰</h2>
             </div>
 
             <div class="bars-container">
@@ -38,6 +39,13 @@
                     <li>Vitalidade: <span class="attr-val" id="attr-vitalidade">1</span></li>
                 </ul>
             </div>
+
+            <div class="inventory-panel" style="margin-top: 20px; border-top: 1px solid #00d2ff; padding-top: 15px;">
+                <h3>💼 Inventário</h3>
+                <div id="grade-inventario" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                    <p style="color: #555; font-size: 0.9em;"> A bolsa está vazia.</p>
+                </div>
+            </div>
         </div>
 
         <div class="quest-panel system-window">
@@ -47,34 +55,80 @@
                 <div class="quest-card">
                     <div class="quest-info">
                         <h3>[C] Treino de Força</h3>
-                        <p>Recompensa: 40 XP | Evolui: Força</p>
+                        <p>Recompensa: 40 XP 10 Ouro | Evolui: Força</p>
                     </div>
-                    <button id="btn-treino_forca" class="btn-complete" onclick="completarMissao('treino_forca', 40, 'forca', this)">Completar</button>
+                    <button id="btn-treino_forca" class="btn-complete" onclick="completarMissao('treino_forca', 40, 10, 'forca', this)">Completar</button>
                 </div>
 
                 <div class="quest-card">
                     <div class="quest-info">
                         <h3>[C] Treino de Agilidade</h3>
-                        <p>Recompensa: 40 XP | Evolui: Agilidade</p>
+                        <p>Recompensa: 40 XP 10 Ouro | Evolui: Agilidade</p>
                     </div>
-                    <button id="btn-treino_agilidade" class="btn-complete" onclick="completarMissao('treino_agilidade', 40, 'agilidade', this)">Completar</button>
+                    <button id="btn-treino_agilidade" class="btn-complete" onclick="completarMissao('treino_agilidade', 40, 10, 'agilidade', this)">Completar</button>
                 </div>
 
                 <div class="quest-card">
                     <div class="quest-info">
                     <h3>[B] Controle da Alimentação e Mente</h3>
-                    <p>Recompensa: 50 XP | Evolui: Vitalidade</p>
+                    <p>Recompensa: 60 XP 20 Ouro | Evolui: Vitalidade</p>
                     </div>
-                    <button id="btn-controle_mente" class="btn-complete" onclick="completarMissao('controle_mente', 60, 'vitalidade', this)">Completar</button>
+                    <button id="btn-controle_mente" class="btn-complete" onclick="completarMissao('controle_mente', 60, 20, 'vitalidade', this)">Completar</button>
                 </div>
 
                 <div class="quest-card">
                     <div class="quest-info">
                         <h3>[B] Avançar no projeto de Python</h3>
-                        <p>Recompensa: 60 XP | Evolui: Inteligência</p>
+                        <p>Recompensa: 60 XP 20 Ouro | Evolui: Inteligência</p>
                     </div>
-                    <button id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 'inteligencia', this)">Completar</button>
+                    <button id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 20,'inteligencia', this)">Completar</button>
                 </div>
+            </div>
+            <div class="shop-panel system-window" style="margin-top: 20px; width: 100%;">
+                <h1 class="window title">LOJA DO SISTEMA </h1>
+
+                <div class="quest-list" style="display: flex; gap: 15px; flex-wrap: wrap;">
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3>🧪 Poção de Cura (P)</h3>
+                            <p>Restaura 50 de HP</p>
+                            <p>Custo: 30 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem(30, 'Poção de Cura (P)')">Comprar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3>🗡️ Adaga Enferrujada</h3>
+                            <p>Arma inicial. +2 de Dano.</p>
+                            <p>Custo: 100 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem(100, 'Adaga Enferrujada')">Comprar</button>
+                    </div>
+
+                     <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3>📖 Livro Antigo</h3>
+                            <p>Arma inicial. +2 de Mana.</p>
+                            <p>Custo: 100 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem(100, 'Livro Antigo')">Comprar</button>
+                     </div>
+
+                     <div class="quest-card" style="flex: 1; min-width: 250px">
+                        <div class="quest-info">
+                            <h3>📖 Pergaminho de Fuga</h3>
+                            <p>Permite fugir de uma Boss Fight.</p>
+                            <p>Custo: 200 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem(200, 'Pergaminho de Fuga')">Comprar</button>
+                     </div>
+                </div>
+
+
+
+
             </div>
         </div>
     </div>
