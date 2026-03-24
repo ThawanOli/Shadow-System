@@ -14,20 +14,33 @@
             <h1 class="window-title">STATUS DO JOGADOR</h1>
 
             <div class="player-info">
-                <h2>Nome: <span class="highlight">Imperador das Rosas Azuis</span></h2>
+                <h2>Nome: <span class="highlight" id="player-nome"></span></h2>
+                <h2>Título: <span class="highlight" id="player-titulo" style="color: #a855f7;"></span></h2>
                 <h2>Nível: <span class="highlight" id="player-level">1</span></h2>
                 <h2>Ouro: <span class="highlight" id="player-ouro">0</span>💰</h2>
             </div>
 
             <div class="bars-container">
-                <div class="bar-label">HP: 100/100</div>
-                <div class="bar-bg"><div class="bar-fill hp-fill" style="width: 100%;"></div></div>
+               <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">
+                 HP: <span id="player-hp">100/100</span>
+                </p>
+                <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
+                    <div id="hp-bar" style="width: 100%; background-color: #ff3333; height: 100%; border-radius: 5px;"></div>
+                </div>
 
-                <div class="bar-label">MP: 100/100</div>
-                <div class="bar-bg"><div class="bar-fill mp-fill" style="width: 100%;"></div></div>
+                <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">
+                     MP: <span id="player-mp">50/50</span>
+                </p>
+                <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px;">
+                <div id="mp-bar" style="width: 100%; background-color: #3366ff; height: 100%; border-radius: 5px;"></div>
+                </div>
 
-                <div class="bar-label" id="xp-text">XP: 0/100</div>
-                <div class="bar-bg"><div class="bar-fill xp-fill" id="xp-bar" style="width: 0%;"></div></div>
+                <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">
+                     <span id="xp-text">XP: 0/100</span>
+                </p>
+                <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
+                    <div id="xp-bar" style="width: 0%; background-color: #f59e0b; height: 100%; border-radius: 5px;"></div>
+                </div>
             </div>
 
             <div class="attributes-panel">
@@ -39,7 +52,15 @@
                     <li>Vitalidade: <span class="attr-val" id="attr-vitalidade">1</span></li>
                 </ul>
             </div>
+            <br>
 
+            <div style="border-top: 1px dashed #00d2ff; padding-top: 10px; margin-top: 10px;">
+                <h3 style="font-size: 1em; color: #00d2ff;">⚔️ Arsenal Equipado</h3>>
+                <p style="font-size: 0.9em;">Arma: <span id="slot-arma" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
+                <p style="font-size: 0.9em;">Armadura: <span id="slot-armadura" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
+                <p style="font-size: 0.9em;">Acessório: <span id="slot-acessorio" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
+
+            </div>
             <div class="inventory-panel" style="margin-top: 20px; border-top: 1px solid #00d2ff; padding-top: 15px;">
                 <h3>💼 Inventário</h3>
                 <div id="grade-inventario" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">

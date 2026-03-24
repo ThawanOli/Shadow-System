@@ -1,5 +1,7 @@
-// O Estado Inicial do Imperador
+// O DNA BASE DO IMPERADOR
 let imperador = {
+    nome: "Thawan Oliveira",
+    titulo: "Imperador das Rosas Azuis",
     nivel: 1,
     xp: 0,
     xpNecessario: 100,
@@ -14,41 +16,43 @@ let imperador = {
         agilidade: 1,
         vitalidade: 1
     },
+    // AS NOVAS GAVETAS PRECISAM EXISTIR AQUI NO TOPO!
+    atributosBonus: {
+        forca: 0,
+        inteligencia: 0,
+        agilidade: 0,
+        vitalidade: 0
+    },
+    equipamentos: {
+        arma: null,
+        armadura: null
+    },
     missoesConcluidas: [],
     ultimoAcesso: "",
     inventario: []
 };
 
- //1. O CARREGAR FICA AQUI  
 let saveGuardado = localStorage.getItem('save_imperador');
-if (saveGuardado !== null) { // Verifica se existe um save anterior
+if (saveGuardado !== null) { 
     imperador = JSON.parse(saveGuardado);
-    // O CURATIVO: Se o save antigo não tiver a lista de missões, nós criamos uma vazia agora!
-    if (!imperador.missoesConcluidas) {
-        imperador.missoesConcluidas = [];
-    }
-    // O FEITIÇO DE CURA: Se o save antigo não tiver a data, nós criamos uma agora!
-    if (!imperador.ultimoAcesso) {
-        imperador.ultimoAcesso = ""
-    }
-    // CURATIVO DO TESOURO:
-    if (imperador.ouro === undefined || isNaN(imperador.ouro)) {
-        imperador.ouro = 0;
-    }
-    // CURATIVO DO INVENTÁRIO:
-    if (!imperador.inventario) {
-        imperador.inventario = [];
-    }
-    // CURATIVO DO HP/MP:
-    if (imperador.hpAtual === undefined) { 
-        imperador.hpAtual = 100;
-        imperador.hpMaximo = 100;
-    }
-    if (imperador.mpAtual === undefined) {
-        imperador.mpAtual = 50;
-        imperador.mpMaximo = 50;
-    }
+    
+    // Curativos Antigos
+    if (!imperador.missoesConcluidas) imperador.missoesConcluidas = [];
+    if (!imperador.ultimoAcesso) imperador.ultimoAcesso = "";
+    if (imperador.ouro === undefined || isNaN(imperador.ouro)) imperador.ouro = 0;
+    if (!imperador.inventario) imperador.inventario = [];
+    if (imperador.hpAtual === undefined) { imperador.hpAtual = 100; imperador.hpMaximo = 100; }
+    if (imperador.mpAtual === undefined) { imperador.mpAtual = 50; imperador.mpMaximo = 50; }
+    if (imperador.nome === undefined) imperador.nome = "Thawan Oliveira";
+    if (imperador.titulo === undefined) imperador.titulo = "Imperador das Rosas Azuis";
 
+    // OS NOVOS CURATIVOS DO ARSENAL 
+    if (!imperador.atributosBonus) {
+        imperador.atributosBonus = { forca: 0, inteligencia: 0, agilidade: 0, vitalidade: 0 };
+    }
+    if (!imperador.equipamentos) {
+        imperador.equipamentos = { arma: null, armadura: null };
+    }
 }   
 
 // O RELÓGIO DO SISTEMA
@@ -72,14 +76,38 @@ if (dataDeHoje !== imperador.ultimoAcesso) {
 // Função que atualiza a pintura na tela
 function atualizarTela() {
     // Atualiza os textos numéricos
+    document.getElementById('player-nome').innerText = imperador.nome;
+    document.getElementById('player-titulo').innerText = imperador.titulo;
     document.getElementById('player-level').innerText = imperador.nivel;
     document.getElementById('player-ouro').innerText = imperador.ouro;
     document.getElementById('xp-text').innerText = `XP: ${imperador.xp}/${imperador.xpNecessario}`;
 
-    document.getElementById('attr-forca').innerText = imperador.atributos.forca;
-    document.getElementById('attr-inteligencia').innerText = imperador.atributos.inteligencia;
-    document.getElementById('attr-agilidade').innerText = imperador.atributos.agilidade;
-    document.getElementById('attr-vitalidade').innerText = imperador.atributos.vitalidade;
+    // A SOMA DO PODER: BASE + BONUS
+    let forcaTotal = imperador.atributos.forca + imperador.atributosBonus.forca;
+    let intTotal = imperador.atributos.inteligencia + imperador.atributosBonus.inteligencia;
+    let agiTotal = imperador.atributos.agilidade + imperador.atributosBonus.agilidade;
+    let vitTotal = imperador.atributos.vitalidade + imperador.atributosBonus.vitalidade;
+
+    // MOTOR STATUS DERIVADO
+    // FORMULA: BASE FIXA + ATRIBUTO * MULTIPLICADOR
+    imperador.hpMaximo = 100 + (vitTotal * 10);
+    imperador.mpMaximo = 50 + (intTotal * 5);
+
+    // Proteção: Se o seu HP máximo diminuir (ex: tirou um equipamento de vitalidade), 
+    // a sua vida atual não pode ficar maior que o limite máximo!
+    if (imperador.hpAtual > imperador.hpMaximo) imperador.hpAtual = imperador.hpMaximo;
+    if (imperador.mpAtual > imperador.mpMaximo) imperador.mpAtual = imperador.mpMaximo;
+
+    // Printa a soma total na tela
+    document.getElementById('attr-forca').innerText = forcaTotal;
+    document.getElementById('attr-inteligencia').innerText = intTotal;
+    document.getElementById('attr-agilidade').innerText = agiTotal;
+    document.getElementById('attr-vitalidade').innerText = vitTotal;
+
+    // Printa os nomes dos equipamentos equipados se for null=nenhuma
+    document.getElementById('slot-arma').innerText = imperador.equipamentos.arma ? imperador.equipamentos.arma : "Nenhuma";
+    document.getElementById('slot-armadura').innerText = imperador.equipamentos.armadura ? imperador.equipamentos.armadura : "Nenhuma";
+    document.getElementById('slot-acessorio').innerText = imperador.equipamentos.acessorio ? imperador.equipamentos.acessorio : "Nenhuma";
 
     // A matemática que faz a barra encher
     let porcentagemXP = (imperador.xp / imperador.xpNecessario) * 100;
@@ -102,7 +130,19 @@ function atualizarTela() {
             botaoSalvo.style.cursor = "not-allowed";
         }
     }   
-}
+    // ... (todo o resto da sua função atualizarTela) ...
+
+    // 1. PINTA OS NÚMEROS REAIS NA TELA
+    document.getElementById('player-hp').innerText = `${imperador.hpAtual}/${imperador.hpMaximo}`;
+    document.getElementById('player-mp').innerText = `${imperador.mpAtual}/${imperador.mpMaximo}`;
+
+    // 2. ESTICA AS BARRAS COLORIDAS (O FEITIÇO VISUAL)
+    let porcentagemHP = (imperador.hpAtual / imperador.hpMaximo) * 100;
+    document.getElementById('hp-bar').style.width = porcentagemHP + '%';
+
+    let porcentagemMP = (imperador.mpAtual / imperador.mpMaximo) * 100;
+    document.getElementById('mp-bar').style.width = porcentagemMP + '%';
+} 
 
 // Ação ativada ao clicar no botão
 function completarMissao(nomeMissao, xpRecompensa, ouroRecompensa, atributoAlvo, botao) {
@@ -131,6 +171,13 @@ console.log(imperador.missoesConcluidas);
          // O alerta de Level Up para o Monarca
         alert("🌟 LEVEL UP! O Sistema reconhece sua evolução, Imperador das Rosas Azuis! 🌟");
     }
+    
+    // NOVO FEITIÇO: A matemática visual da Vida e da Mana
+    let porcentagemHP = (imperador.hpAtual / imperador.hpMaximo) * 100;
+    document.getElementById('player-hp').style.width = porcentagemHP + '%';
+
+    let porcentagemMP = (imperador.mpAtual / imperador.mpMaximo) * 100;
+    document.getElementById('player-mp').style.width = porcentagemMP + '%';
 
     // Atualiza a interface com a matemática processada acima
     atualizarTela();
@@ -190,14 +237,48 @@ function usarItem(nomeItem) {
             }
             alert(`Você bebeu a Poção. Hp restaurado!`);
         }
-        else if (nomeItem === 'Adaga Enferrujada') {
-            alert(`Adaga Equipada com sucesso!`);
+       else if (nomeItem === 'Adaga Enferrujada') {
+            // 1- Verifica se as mãos estão ocupadas
+            if (imperador.equipamentos.arma !== null) {
+                let armaAntiga = imperador.equipamentos.arma;
+                imperador.inventario.push(armaAntiga); // Devolve pra mochila
+                
+                // O SISTEMA AGORA VERIFICA O QUE TIRAR!
+                if (armaAntiga === 'Adaga Enferrujada') {
+                    imperador.atributosBonus.forca -= 2;
+                } else if (armaAntiga === 'Livro Antigo') {
+                    imperador.atributosBonus.inteligencia -= 2;
+                }
+            }
+            
+            // 2- Equipa a nova arma
+            imperador.equipamentos.arma = 'Adaga Enferrujada';
+            
+            // 3- Concede os status
+            imperador.atributosBonus.forca += 2;
+            alert(`Adaga Equipada com sucesso, força aumentada em 2!`);
         }
+        
         else if (nomeItem === 'Livro Antigo') {
-            alert(`Livro Antigo Equipado!`);
-        }
-        else {
-            alert(`Você inspecionou o item [${nomeItem}]`);
+            // 1- Verifica se as mãos estão ocupadas
+            if (imperador.equipamentos.arma !== null) {
+                let armaAntiga = imperador.equipamentos.arma;
+                imperador.inventario.push(armaAntiga); // Devolve pra mochila
+                
+                // O SISTEMA AGORA VERIFICA O QUE TIRAR!
+                if (armaAntiga === 'Adaga Enferrujada') {
+                    imperador.atributosBonus.forca -= 2;
+                } else if (armaAntiga === 'Livro Antigo') {
+                    imperador.atributosBonus.inteligencia -= 2;
+                }
+            }
+            
+            // 2- Equipa a nova arma
+            imperador.equipamentos.arma = 'Livro Antigo';
+            
+            // 3- Concede os status
+            imperador.atributosBonus.inteligencia += 2;
+            alert(`Livro Antigo Equipado com sucesso, inteligência aumentada em 2!`);
         }
 
         // O set do inventário: Arranca 1 item daquela posição exata
@@ -206,6 +287,8 @@ function usarItem(nomeItem) {
         // Salva as mudanças e att a tela
         localStorage.setItem('save_imperador', JSON.stringify(imperador));
         atualizarTela();
+
+        renderizarInventario(); // Atualiza a bolsa para refletir o item usado
     }
 }
         // A Magia que desenha os itens da bolsa na tela
