@@ -10,14 +10,15 @@
 <body>
     
     <div class="system-container">
-        <div class="status-panel system-window">
+        
+        <div class="status-panel system-window" style="flex: 1; min-width: 380px;">
             <h1 class="window-title">STATUS DO JOGADOR</h1>
 
             <div class="player-info">
                 <h2>Nome: <span class="highlight" id="player-nome"></span></h2>
                 <h2>Título: <span class="highlight" id="player-titulo" style="color: #a855f7;"></span></h2>
                 <h2>Nível: <span class="highlight" id="player-level">1</span></h2>
-                <h2>Ouro: <span class="highlight" id="player-ouro">0</span>💰</h2>
+                <h2>Ouro: <span class="highlight" id="player-ouro">0</span></h2>
             </div>
 
             <div class="bars-container">
@@ -40,7 +41,7 @@
                 </p>
                 <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
                     <div id="xp-bar" style="width: 0%; background-color: #f59e0b; height: 100%; border-radius: 5px;"></div>
-                </div>
+                 </div>
             </div>
 
             <div class="attributes-panel">
@@ -55,66 +56,63 @@
             <br>
 
             <div style="border-top: 1px dashed #00d2ff; padding-top: 10px; margin-top: 10px;">
-                <h3 style="font-size: 1em; color: #00d2ff;">⚔️ Arsenal Equipado</h3>>
+                <h3 style="font-size: 1em; color: #00d2ff;">⚔️ Arsenal Equipado</h3>
                 <p style="font-size: 0.9em;">Arma: <span id="slot-arma" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
                 <p style="font-size: 0.9em;">Armadura: <span id="slot-armadura" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
                 <p style="font-size: 0.9em;">Acessório: <span id="slot-acessorio" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
-
             </div>
+
             <div class="inventory-panel" style="margin-top: 20px; border-top: 1px solid #00d2ff; padding-top: 15px;">
                 <h3>💼 Inventário</h3>
                 <div id="grade-inventario" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-                    <p style="color: #555; font-size: 0.9em;"> A bolsa está vazia.</p>
+                    <p style="color: #555; font-size: 0.9em;">A bolsa está vazia.</p>
                 </div>
             </div>
-        </div>
-
-        <div class="quest-panel system-window">
-            <h1 class="window-title">MISSÕES DIÁRIAS</h1>
-
-            <div class="quest-list">
-                <div class="quest-card">
-                    <div class="quest-info">
-                        <h3>[C] Treino de Força</h3>
-                        <p>Recompensa: 40 XP 10 Ouro | Evolui: Força</p>
+        </div> 
+        <div class="right-column" style="display: flex; flex-direction: column; gap: 20px; flex: 1.5;">
+            
+            <div class="quest-panel system-window">
+                <h1 class="window-title">MISSÕES DIÁRIAS</h1>
+                <div class="quest-list">
+                    <div class="quest-card">
+                        <div class="quest-info">
+                            <h3>[C] Treino de Força</h3>
+                            <p>Recompensa: 40 XP 10 Ouro | Evolui: Força</p>
+                        </div>
+                        <button id="btn-treino_forca" class="btn-complete" onclick="completarMissao('treino_forca', 40, 10, 'forca', this)">Completar</button>
                     </div>
-                    <button id="btn-treino_forca" class="btn-complete" onclick="completarMissao('treino_forca', 40, 10, 'forca', this)">Completar</button>
-                </div>
 
-                <div class="quest-card">
-                    <div class="quest-info">
-                        <h3>[C] Treino de Agilidade</h3>
-                        <p>Recompensa: 40 XP 10 Ouro | Evolui: Agilidade</p>
+                    <div class="quest-card">
+                        <div class="quest-info">
+                            <h3>[C] Treino de Agilidade</h3>
+                            <p>Recompensa: 40 XP 10 Ouro | Evolui: Agilidade</p>
+                        </div>
+                        <button id="btn-treino_agilidade" class="btn-complete" onclick="completarMissao('treino_agilidade', 40, 10, 'agilidade', this)">Completar</button>
                     </div>
-                    <button id="btn-treino_agilidade" class="btn-complete" onclick="completarMissao('treino_agilidade', 40, 10, 'agilidade', this)">Completar</button>
-                </div>
 
-                <div class="quest-card">
-                    <div class="quest-info">
-                    <h3>[B] Controle da Alimentação e Mente</h3>
-                    <p>Recompensa: 60 XP 20 Ouro | Evolui: Vitalidade</p>
+                    <div class="quest-card">
+                        <div class="quest-info">
+                        <h3>[B] Controle da Alimentação e Mente</h3>
+                        <p>Recompensa: 60 XP 20 Ouro | Evolui: Vitalidade</p>
+                        </div>
+                        <button id="btn-controle_mente" class="btn-complete" onclick="completarMissao('controle_mente', 60, 20, 'vitalidade', this)">Completar</button>
                     </div>
-                    <button id="btn-controle_mente" class="btn-complete" onclick="completarMissao('controle_mente', 60, 20, 'vitalidade', this)">Completar</button>
-                </div>
 
-                <div class="quest-card">
-                    <div class="quest-info">
-                        <h3>[B] Avançar no projeto de Python</h3>
-                        <p>Recompensa: 60 XP 20 Ouro | Evolui: Inteligência</p>
+                    <div class="quest-card">
+                        <div class="quest-info">
+                            <h3>[B] Avançar no projeto de Python</h3>
+                            <p>Recompensa: 60 XP 20 Ouro | Evolui: Inteligência</p>
+                        </div>
+                        <button id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 20,'inteligencia', this)">Completar</button>
                     </div>
-                    <button id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 20,'inteligencia', this)">Completar</button>
                 </div>
-            </div>
-            <div class="shop-panel system-window" style="margin-top: 20px; width: 100%;">
-                <h1 class="window title">LOJA DO SISTEMA </h1>
-
+            </div> <div class="shop-panel system-window" style="width: 100%;">
+                <h1 class="window-title">LOJA DO SISTEMA</h1>
                 <div class="quest-list" style="display: flex; gap: 15px; flex-wrap: wrap;">
-
                     <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
-                            <h3>🧪 Poção de Cura (P)</h3>
-                            <p>Restaura 50 de HP</p>
-                            <p>Custo: 30 Ouro</p>
+                            <h3>💊 Poção de Cura (P)</h3>
+                            <p>Restaura 50 de HP<br>Custo: 30 Ouro</p>
                         </div>
                         <button class="btn-complete" onclick="comprarItem(30, 'Poção de Cura (P)')">Comprar</button>
                     </div>
@@ -122,8 +120,7 @@
                     <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
                             <h3>🗡️ Adaga Enferrujada</h3>
-                            <p>Arma inicial. +2 de Dano.</p>
-                            <p>Custo: 100 Ouro</p>
+                            <p>Arma inicial. +2 de Força.<br>Custo: 100 Ouro</p>
                         </div>
                         <button class="btn-complete" onclick="comprarItem(100, 'Adaga Enferrujada')">Comprar</button>
                     </div>
@@ -131,26 +128,57 @@
                      <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
                             <h3>📖 Livro Antigo</h3>
-                            <p>Arma inicial. +2 de Mana.</p>
-                            <p>Custo: 100 Ouro</p>
+                            <p>Arma inicial. +2 de Inteligência.<br>Custo: 100 Ouro</p>
                         </div>
                         <button class="btn-complete" onclick="comprarItem(100, 'Livro Antigo')">Comprar</button>
                      </div>
 
                      <div class="quest-card" style="flex: 1; min-width: 250px">
                         <div class="quest-info">
-                            <h3>📖 Pergaminho de Fuga</h3>
-                            <p>Permite fugir de uma Boss Fight.</p>
-                            <p>Custo: 200 Ouro</p>
+                            <h3>📜 Pergaminho de Fuga</h3>
+                            <p>Permite fugir de uma Boss Fight.<br>Custo: 200 Ouro</p>
                         </div>
                         <button class="btn-complete" onclick="comprarItem(200, 'Pergaminho de Fuga')">Comprar</button>
                      </div>
                 </div>
-
-
-
-
+            </div> <div class="quest-panel system-window" style="border-top: 1px dashed #00d2ff; padding-top: 20px; box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);">
+                <h1 class="window-title">ZONAS DE PERIGO</h1>
+                <div class="quest-list" style="justify-content: center; align-items: center; display: flex;">
+                    <button onclick="entrarMasmorra()" class="btn-complete" style="background-color: transparent; border: 2px solid #00d2ff; color: #00d2ff; padding: 15px 40px; font-size: 1.2em; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(0, 210, 255, 0.6), 0 0 5px rgba(0, 210, 255, 0.4);">
+                        ⚔️ Explorar Masmorra ⚔️
+                    </button>
+                </div>
+            </div> 
+        </div> 
+    </div> 
+    <div id="tela-masmorra" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 10, 10, 0.95); z-index: 1000; padding: 20px; color: white; text-align: center; overflow-y: auto;">
+        <h1 style="color: #ef4444; text-shadow: 0 0 10px red; margin-top: 20px; font-size: 2.5em;">Caverna dos Goblins</h1>
+        
+        <div style="margin: 30px auto; border: 2px solid #555; padding: 20px; border-radius: 10px; max-width: 400px; background-color: #1a1a1a; box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);">
+            <h2 id="monstro-nome" style="color: #4ade80;">Goblin Saqueador</h2>
+            <p style="color: #aaa; font-size: 0.9em;">Nível: <span id="monstro-nivel">1</span></p>
+            
+            <p style="margin: 10px 0 5px 0; font-weight: bold;">HP: <span id="monstro-hp-texto">30/30</span></p>
+            <div style="width: 100%; background-color: #333; height: 15px; border-radius: 5px;">
+                <div id="monstro-hp-bar" style="width: 100%; background-color: #ef4444; height: 100%; border-radius: 5px; transition: width 0.3s;"></div>
             </div>
+        </div>
+
+        <div style="margin: 20px auto; border: 2px solid #00d2ff; padding: 15px; border-radius: 10px; max-width: 400px; background-color: rgba(0, 210, 255, 0.1); box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);">
+            <h3 style="color: #00d2ff; margin-bottom: 10px; font-size: 1.2em; text-align: left;">Sua Vitalidade</h3>
+            <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em; text-align: left;">HP: <span id="batalha-player-hp-texto">100/100</span></p>
+            <div style="width: 100%; background-color: #333; height: 15px; border-radius: 5px;">
+                <div id="batalha-player-hp-bar" style="width: 100%; background-color: #00d2ff; height: 100%; border-radius: 5px; transition: width 0.3s;"></div>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
+            <button onclick="atacarMonstro()" style="background-color: #3b82f6; color: white; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 1.1em; transition: 0.2s; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">🗡️ Atacar</button>
+            <button onclick="fugirMasmorra()" style="background-color: #555; color: white; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 1.1em;">🏃 Recuar</button>
+        </div>
+        
+        <div id="log-batalha" style="margin-top: 40px; color: #d1d5db; font-style: italic; font-size: 1.2em; min-height: 50px; padding: 10px; border-left: 3px solid #3b82f6; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Um Goblin de olhos vermelhos percebe a sua presença...
         </div>
     </div>
 

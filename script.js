@@ -163,13 +163,9 @@ console.log(imperador.missoesConcluidas);
     imperador.ouro += ouroRecompensa;
     imperador.atributos[atributoAlvo] += 1;
 
-    // Se o XP bater o limite, você sobe de nível!
+   // Se o XP bater o limite, você sobe de nível!
     if (imperador.xp >= imperador.xpNecessario) {
-        imperador.nivel += 1;
-        imperador.xp -= imperador.xpNecessario; 
-        imperador.xpNecessario = Math.floor(imperador.xpNecessario * 1.5);
-         // O alerta de Level Up para o Monarca
-        alert("🌟 LEVEL UP! O Sistema reconhece sua evolução, Imperador das Rosas Azuis! 🌟");
+        subirDeNivel();
     }
     
     // NOVO FEITIÇO: A matemática visual da Vida e da Mana
@@ -331,6 +327,148 @@ function renderizarInventario() {
     }
 }
 
+// Sistema de batalha 
+
+//Primeiro Inimigo
+let monstroAtual = {
+    nome: "Goblin Saqueador",
+    nivel: 1,
+    hpAtual: 30,
+    hpMaximo: 30,
+    ataqueBase: 5,
+    xpDrop: 20,
+    ouroDrop: 15
+};
+
+//Abrir portais
+function entrarMasmorra() {
+    document.getElementById('tela-masmorra').style.display = 'block';
+    document.getElementById('log-batalha').innerText = "A batalha começou! O que o Imperador fará?"
+    atualizarTelaMasmorra(); // Pra ler os status antes de começar a luta
+}
+
+//Logica batalhas
+function registrarLog(mensagem) {
+    document.getElementById('log-batalha').innerText = mensagem;
+}
+
+function atualizarTelaMasmorra(){
+    // HP Monstro
+    document.getElementById('monstro-hp-texto').innerText = `${monstroAtual.hpAtual}/${monstroAtual.hpMaximo}`;
+    let porcentagem = (monstroAtual.hpAtual / monstroAtual.hpMaximo) * 100;
+    document.getElementById('monstro-hp-bar').style.width = porcentagem + '%';
+    
+    //HP Imperador
+    let hpTextoBatalha = document.getElementById('batalha-player-hp-texto');
+    let hpBarraBatalha = document.getElementById('batalha-player-hp-bar');
+
+    //Pra att só o que tem na tela
+    if (hpTextoBatalha && hpBarraBatalha) {
+        hpTextoBatalha.innerText = `${imperador.hpAtual}/${imperador.hpMaximo}`;
+        let porcentagemImperador = (imperador.hpAtual / imperador.hpMaximo) * 100;
+        hpBarraBatalha.style.width = porcentagemImperador + '%';
+    }    
+}
+
+//Turno combate
+function atacarMonstro (){
+    //1 Turno Imperador. Pega força multiplica por 2 pra ser dano base
+    let forcaTotal = imperador.atributos.forca + (imperador.atributosBonus ? imperador.atributosBonus.forca : 0);
+    let danoImperador = forcaTotal * 2;
+
+    //Dar dano no  mob
+    monstroAtual.hpAtual -= danoImperador;
+    if (monstroAtual.hpAtual < 0) monstroAtual.hpAtual = 0; //Pra n deixar o hp negativo
+
+    registrarLog(`Você atacou com precisão e causou ${danoImperador} de dano!`);
+    atualizarTelaMasmorra();
+
+    // 2 Verifica se o mob ta vivo
+    if (monstroAtual.hpAtual <= 0) {
+        registrarLog(`O ${monstroAtual.nome} foi abatido! Você adquiriu +${monstroAtual.xpDrop} XP e +${monstroAtual.ouroDrop} Ouro.`);
+        
+        // Dá os drop
+        imperador.xp += monstroAtual.xpDrop;
+        imperador.ouro += monstroAtual.ouroDrop;
+
+       // Se o XP estourar o limite, Level UP!
+        if (imperador.xp >= imperador.xpNecessario) {
+            subirDeNivel();
+        }
+        //Salva
+        localStorage.setItem('save_imperador', JSON.stringify(imperador));
+        atualizarTela();
+
+        //Fechar masmorra apos 2 seg
+        setTimeout(() => {
+            fugirMasmorra();
+            monstroAtual.hpAtual = monstroAtual.hpMaximo; //Ressuscita o goblin pra prox vez
+            atualizarTelaMasmorra();
+        }, 2000);
+    
+        return; // Encerra o turno aqui pois o monstro morreu e n vai reviver agora
+    }
+    // 3. Turno do monstro 
+    setTimeout(() => {
+        let danoMonstro = monstroAtual.ataqueBase;
+        imperador.hpAtual -= danoMonstro;
+        if (imperador.hpAtual < 0) imperador.hpAtual = 0;
+
+        registrarLog(`O ${monstroAtual.nome} revidou furiosamente e causou ${danoMonstro} do seu HP!`);
+      
+        //ATT TELA PRA VIDA CAIR
+        atualizarTela();
+        localStorage.setItem('save_imperador', JSON.stringify(imperador));
+
+        // Verifica se o Emperor tankou
+        if (imperador.hpAtual <= 0) {
+            registrarLog(`A sua visão escurece . . . Você foi abatido.`);
+            alert("O Sistema ativou a proteção e te salvou. Você recebeu uma segunda chance ficando com 1 de HP!");
+
+            imperador.hpAtual = 1;
+            localStorage.setItem('save_imperador', JSON.stringfy(imperador));
+            atualizarTela();
+
+            fugirMasmorra();
+            monstroAtual.hpAtual = monstroAtual.hpMaximo; //Reseta o mob
+            atualizarTelaMasmorra();
+        }
+    }, 1000);
+ }
+
+//Fugir batalha e voltar menu
+function fugirMasmorra() {
+    document.getElementById('tela-masmorra').style.display = 'none';
+}
+
+// O RITUAL DE EVOLUÇÃO, PRECISO GANHAR ALGO QND SUBIR DE LVL, CERTO?
+function subirDeNivel() {
+    // Escalamento de xp
+    imperador.nivel += 1;
+    imperador.xp -= imperador.xpNecessario;
+    imperador.xpNecessario = Math.floor(imperador.xpNecessario * 1.5);
+
+    // Subiu de lvl ganhou
+    imperador.atributos.forca += 1;
+    imperador.atributos.inteligencia += 1;
+    imperador.atributos.agilidade += 1;
+    imperador.atributos.vitalidade += 1;
+
+    // Recalcula o tamanho do corpo(vitalidade subiu, barra sobe)
+    atualizarTela();
+
+    // Status Recovery(Cura Total)
+    imperador.hpAtual = imperador.hpMaximo;
+    imperador.mpAtual = imperador.mpMaximo;
+
+    //Salva e atualiza tela
+    localStorage.setItem('save_imperador',JSON.stringify(imperador));
+    atualizarTela();
+
+    //Anuncio
+    alert(`LVL UP! O Sistema reconhece sua supremacia,
+         Imperador!\n\nNível: ${imperador.nivel}\nTodos os atributos +1\nStatus Recovery ativado: HP e MP restaurados!`);
+}
 // Inicia os valores corretos assim que a página é aberta
 atualizarTela();
 renderizarInventario(); 
