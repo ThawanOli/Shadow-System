@@ -218,6 +218,46 @@ function comprarItem(custo, nomeItem) {
     }
 }
 
+// Alterna a visualização da loja
+function mudarAbaLoja(abaAlvo) {
+    let lojaVirtual = document.getElementById('loja-virtual');
+    let lojaReal = document.getElementById('loja-real');
+    let btnVirtual = document.getElementById('btn-aba-virtual');
+    let btnReal = document.getElementById('btn-aba-real');
+
+    if (abaAlvo === 'loja-virtual') {
+        lojaVirtual.style.display = 'flex';
+        lojaReal.style.display = 'none';
+        
+        // Acende o botão virtual
+        btnVirtual.style.backgroundColor = 'rgba(0, 210, 255, 0.2)';
+        btnReal.style.backgroundColor = 'transparent';
+    } else {
+        lojaVirtual.style.display = 'none';
+        lojaReal.style.display = 'flex';
+        
+        // Acende o botão real (Roxo!)
+        btnReal.style.backgroundColor = 'rgba(168, 85, 247, 0.2)';
+        btnVirtual.style.backgroundColor = 'transparent';
+    }
+}
+
+// Lógica de resgate de itens do mundo real
+function comprarRecompensaReal(custo, nomeRecompensa) {
+    if (imperador.ouro >= custo) {
+        imperador.ouro -= custo;
+        
+        // Salva o dinheiro gasto e atualiza a tela
+        localStorage.setItem('save_imperador', JSON.stringify(imperador));
+        atualizarTela();
+
+        // O Anúncio da Glória Real
+        alert(`🏆 TRANSACÇÃO APROVADA!\n\nVocê pagou ${custo} Ouro.\nO Sistema autoriza o resgate de: [${nomeRecompensa}].\n\nAproveite sua recompensa no mundo real, Imperador!`);
+    } else {
+        alert("Ouro insuficiente! A vida real exige mais esforço e sacrifício. Cumpra mais missões diárias!");
+    }
+}
+
 // A lógica de consumo de itens
 function usarItem(nomeItem) {
     // Descobre em qual posição do inventário tá o item

@@ -1,5 +1,3 @@
-A Loja do Sistema (Economia): Adicionar uma recompensa em "Ouro" ao completar missões, além do XP. Criar uma nova aba no aplicativo onde o Imperador pode gastar esse ouro em recompensas da vida real (ex: "Jogar 1 hora de Elden Ring" custa 500 de Ouro).
-
 A Ressurreição do Backend (Python & Banco de Dados): Atualmente, o seu save vive no cofre frágil do navegador (localStorage). O próximo passo lógico seria resgatar aquele código em Python que fizemos no primeiro dia, transformá-lo em uma API e conectar a esta sua bela interface. Assim, o seu save viveria em um banco de dados real.
 
 Criptografia Anti-Trapaça (Cibersegurança): O localStorage é de fácil acesso. Qualquer um que apertar F12 pode ir lá e digitar que tem 999.000 de XP. Podemos aplicar os seus interesses em cibersegurança para criar um algoritmo de hash ou criptografia em base64 que embaralha os dados do save, impedindo edições manuais fraudulentas.

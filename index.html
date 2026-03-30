@@ -63,7 +63,7 @@
             </div>
 
             <div class="inventory-panel" style="margin-top: 20px; border-top: 1px solid #00d2ff; padding-top: 15px;">
-                <h3>💼 Inventário</h3>
+                <h3>Inventário</h3>
                 <div id="grade-inventario" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
                     <p style="color: #555; font-size: 0.9em;">A bolsa está vazia.</p>
                 </div>
@@ -106,12 +106,21 @@
                         <button id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 20,'inteligencia', this)">Completar</button>
                     </div>
                 </div>
-            </div> <div class="shop-panel system-window" style="width: 100%;">
+            </div> 
+            
+          <div class="shop-panel system-window" style="width: 100%;">
                 <h1 class="window-title">LOJA DO SISTEMA</h1>
-                <div class="quest-list" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;">
+                    <button onclick="mudarAbaLoja('loja-virtual')" id="btn-aba-virtual" style="background-color: rgba(0, 210, 255, 0.2); color: #00d2ff; border: 1px solid #00d2ff; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s;">Itens do Sistema</button>
+                    
+                    <button onclick="mudarAbaLoja('loja-real')" id="btn-aba-real" style="background-color: transparent; color: #a855f7; border: 1px solid #a855f7; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s;">Recompensas Reais</button>
+                </div>
+
+                <div id="loja-virtual" class="quest-list" style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
-                            <h3>💊 Poção de Cura (P)</h3>
+                            <h3> Poção de Cura (P)</h3>
                             <p>Restaura 50 de HP<br>Custo: 30 Ouro</p>
                         </div>
                         <button class="btn-complete" onclick="comprarItem(30, 'Poção de Cura (P)')">Comprar</button>
@@ -119,7 +128,7 @@
 
                     <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
-                            <h3>🗡️ Adaga Enferrujada</h3>
+                            <h3> Adaga Enferrujada</h3>
                             <p>Arma inicial. +2 de Força.<br>Custo: 100 Ouro</p>
                         </div>
                         <button class="btn-complete" onclick="comprarItem(100, 'Adaga Enferrujada')">Comprar</button>
@@ -127,7 +136,7 @@
 
                      <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
-                            <h3>📖 Livro Antigo</h3>
+                            <h3> Livro Antigo</h3>
                             <p>Arma inicial. +2 de Inteligência.<br>Custo: 100 Ouro</p>
                         </div>
                         <button class="btn-complete" onclick="comprarItem(100, 'Livro Antigo')">Comprar</button>
@@ -135,22 +144,42 @@
 
                      <div class="quest-card" style="flex: 1; min-width: 250px">
                         <div class="quest-info">
-                            <h3>📜 Pergaminho de Fuga</h3>
+                            <h3> Pergaminho de Fuga</h3>
                             <p>Permite fugir de uma Boss Fight.<br>Custo: 200 Ouro</p>
                         </div>
                         <button class="btn-complete" onclick="comprarItem(200, 'Pergaminho de Fuga')">Comprar</button>
                      </div>
                 </div>
-            </div> <div class="quest-panel system-window" style="border-top: 1px dashed #00d2ff; padding-top: 20px; box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);">
-                <h1 class="window-title">ZONAS DE PERIGO</h1>
-                <div class="quest-list" style="justify-content: center; align-items: center; display: flex;">
-                    <button onclick="entrarMasmorra()" class="btn-complete" style="background-color: transparent; border: 2px solid #00d2ff; color: #00d2ff; padding: 15px 40px; font-size: 1.2em; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(0, 210, 255, 0.6), 0 0 5px rgba(0, 210, 255, 0.4);">
-                        ⚔️ Explorar Masmorra ⚔️
-                    </button>
+
+                <div id="loja-real" class="quest-list" style="display: none; gap: 15px; flex-wrap: wrap;">
+                    
+                    <div class="quest-card" style="flex: 1; min-width: 250px; border-left: 4px solid #a855f7;">
+                        <div class="quest-info">
+                            <h3 style="color: #a855f7;"> 1 Hora de Elden Ring</h3>
+                            <p>Imersão total nas Terras Intermédias.<br>Custo: 300 Ouro</p>
+                        </div>
+                        <button class="btn-complete" style="color: #a855f7; border-color: #a855f7;" onclick="comprarRecompensaReal(300, '1 Hora de Elden Ring')">Resgatar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px; border-left: 4px solid #a855f7;">
+                        <div class="quest-info">
+                            <h3 style="color: #a855f7;"> Leitura: Solo Leveling</h3>
+                            <p>Ler capítulos sem culpa.<br>Custo: 150 Ouro</p>
+                        </div>
+                        <button class="btn-complete" style="color: #a855f7; border-color: #a855f7;" onclick="comprarRecompensaReal(150, 'Leitura: Solo Leveling')">Resgatar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px; border-left: 4px solid #a855f7;">
+                        <div class="quest-info">
+                            <h3 style="color: #a855f7;"> Sessão de Roblox</h3>
+                            <p>Jogatina liberada.<br>Custo: 200 Ouro</p>
+                        </div>
+                        <button class="btn-complete" style="color: #a855f7; border-color: #a855f7;" onclick="comprarRecompensaReal(200, 'Sessão de Roblox')">Resgatar</button>
+                    </div>
+
                 </div>
-            </div> 
-        </div> 
-    </div> 
+            </div>
+
     <div id="tela-masmorra" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 10, 10, 0.95); z-index: 1000; padding: 20px; color: white; text-align: center; overflow-y: auto;">
         <h1 style="color: #ef4444; text-shadow: 0 0 10px red; margin-top: 20px; font-size: 2.5em;">Caverna dos Goblins</h1>
         
