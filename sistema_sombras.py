@@ -1,6 +1,9 @@
 import json
 import os
 
+# Primeira versão do sistema de progressão inspirado em jogos de RPG, com foco em missões diárias, 
+# XP e evolução de atributos. O código é estruturado para ser facilmente expandido com novas funcionalidades, como mais tipos de missões, 
+# inimigos e itens.
 class Player:
     def __init__(self,nome):
         self.nome = nome
@@ -9,7 +12,7 @@ class Player:
         self.xp_necessario = 100  #XP para chegar ao lvl 2
         self.hp = 100
 
-        #1. NOVA ÁRVORE DE ATRIBUTOS (Dicionário)
+        #1. ÁRVORE DE ATRIBUTOS (Dicionário)
         self.atributos = {
             "Força": 1,
             "Inteligência": 1,
@@ -17,8 +20,8 @@ class Player:
             "Vitalidade":1
         }
 
-        self.arquivo_save = "save_imperador.json" #Salva
-        self.carregar()   #carrega
+        self.arquivo_save = "save_imperador.json" 
+        self.carregar()   
 
     def exibir_status(self):
         print("\n" + "="*30)
@@ -30,7 +33,7 @@ class Player:
         print(f"HP: {self.hp} / 100")
         print("="*30 + "\n")
         print("📊 ÁRVORE DE ATRIBUTOS:")
-        # O loop 'items()' percorre  dicionário mostrando o Nome e o Valor do atributo
+        
         for atributo, valor in self.atributos.items():
             print (f" > {atributo}: {valor}")
         print ("="*30 + "\n")
