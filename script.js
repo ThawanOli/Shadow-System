@@ -1,59 +1,56 @@
-// O DNA BASE 
-let imperador = {
-    nome: "Thawan Oliveira",
-    titulo: "Imperador das Rosas Azuis",
-    nivel: 1,
-    xp: 0,
-    xpNecessario: 100,
-    ouro: 0,
-    hpAtual: 100,
-    hpMaximo: 100,
-    mpAtual: 50,
-    mpMaximo: 50,
-    atributos: {
-        forca: 1,
-        inteligencia: 1,
-        agilidade: 1,
-        vitalidade: 1
-    },
-    
-    atributosBonus: {
-        forca: 0,
-        inteligencia: 0,
-        agilidade: 0,
-        vitalidade: 0
-    },
-    equipamentos: {
-        arma: null,
-        armadura: null
-    },
-    missoesConcluidas: [],
-    ultimoAcesso: "",
-    inventario: []
-};
+// ==========================================
+// 👑 ENTIDADE PRINCIPAL: O MONARCA
+// ==========================================
+class Monarca {
+    constructor() {
+        let save = JSON.parse(localStorage.getItem('save_imperador'));
 
-let saveGuardado = localStorage.getItem('save_imperador');
-if (saveGuardado !== null) { 
-    imperador = JSON.parse(saveGuardado);
-    
-    
-    if (!imperador.missoesConcluidas) imperador.missoesConcluidas = [];
-    if (!imperador.ultimoAcesso) imperador.ultimoAcesso = "";
-    if (imperador.ouro === undefined || isNaN(imperador.ouro)) imperador.ouro = 0;
-    if (!imperador.inventario) imperador.inventario = [];
-    if (imperador.hpAtual === undefined) { imperador.hpAtual = 100; imperador.hpMaximo = 100; }
-    if (imperador.mpAtual === undefined) { imperador.mpAtual = 50; imperador.mpMaximo = 50; }
-    if (imperador.nome === undefined) imperador.nome = "Thawan Oliveira";
-    if (imperador.titulo === undefined) imperador.titulo = "Imperador das Rosas Azuis";
+        if (save) {
+            Object.assign(this, save);
+        } else {
+            this.nome = "Thawan Oliveira";
+            this.titulo = "Imperador das Rosas Azuis";
+            this.nivel = 1;
+            this.ouro = 0;
+            this.xp = 0;
+            this.xpNecessario = 100;
+            this.atributos = { forca: 1, inteligencia: 1, agilidade: 1, vitalidade: 1 };
+            this.hpMaximo = 110;
+            this.hpAtual = 110;
+            this.mpMaximo = 50;
+            this.mpAtual = 50;
+            this.inventario = [];
+            this.equipamentos = { arma: null, armadura: null, acessorio: null };
+            this.atributosBonus = { forca: 0, inteligencia: 0, agilidade: 0, vitalidade: 0 };
+            this.missoesConcluidas = [];
+            this.ultimoAcesso = "";
+        }
+    }
+    salvarEstado() {
+        localStorage.setItem('save_imperador', JSON.stringify(this));
+    }
+    subirDeNivel() {
+        this.nivel += 1;
+        this.xp -= this.xpNecessario;
+        this.xpNecessario = Math.floor(this.xpNecessario * 1.5);
 
-    
-    if (!imperador.atributosBonus) {
-        imperador.atributosBonus = { forca: 0, inteligencia: 0, agilidade: 0, vitalidade: 0 };
+        // Status Recovery
+        this.atributos.forca += 1;
+        this.atributos.inteligencia += 1;
+        this.atributos.agilidade += 1;
+        this.atributos.vitalidade += 1;
+
+        // Recalcula limites vitais baseados na nova vitalidade
+        this.hpMaximo = 100 + (this.atributos.vitalidade * 10);
+        this.hpAtual = this.hpMaximo;
+        this.mpAtual = this.mpMaximo;
+
+        this.salvarEstado();
     }
-    if (!imperador.equipamentos) {
-        imperador.equipamentos = { arma: null, armadura: null };
-    }
-}   
+}
+
+// Criando o ser vivo a partir do molde (A Instância)
+let imperador = new Monarca();
 
 // O RELÓGIO DO SISTEMA
 //Descobre que dia é hoje
@@ -67,9 +64,7 @@ if (dataDeHoje !== imperador.ultimoAcesso) {
     
     imperador.ultimoAcesso = dataDeHoje;
 
-   // Sincroniza o estado atual do objeto 'imperador' com o LocalStorage 
-// para persistência entre sessões do navegador.
-    localStorage.setItem('save_imperador', JSON.stringify(imperador));
+    imperador.salvarEstado();
 
     console.log("Novo dia detectado! Missões resetadas, Imperador das Rosas Azuis!");
 }
@@ -147,7 +142,8 @@ console.log(imperador.missoesConcluidas);
     imperador.atributos[atributoAlvo] += 1;
 
     if (imperador.xp >= imperador.xpNecessario) {
-        subirDeNivel();
+        imperador.subirDeNivel();
+        alert(`Parabéns, Imperador! Você subiu para o nível ${imperador.nivel}! Seus atributos aumentaram e seu poder cresce a cada dia!`);
     }
     
     let porcentagemHP = (imperador.hpAtual / imperador.hpMaximo) * 100;
@@ -165,24 +161,25 @@ console.log(imperador.missoesConcluidas);
     botao.style.boxShadow = "none";
     botao.style.cursor = "not-allowed";
 
-    localStorage.setItem('save_imperador', JSON.stringify(imperador));
+    imperador.salvarEstado();
 }
 
 atualizarTela();
 
-function comprarItem(custo, nomeItem) {
-    if (imperador.ouro >= custo) {
-        imperador.ouro -= custo;
+function comprarItem(nomeItem) {
+    console.log("O HTML enviou o nome:", nomeItem);
+    //Pega os dados no cofre
+    let itemObj = bancoDeItens[nomeItem];
+    //Verifica se o item existe e se tem dinheiro pra comprar
+    if (itemObj &&imperador.ouro >= itemObj.preco) {
+        imperador.ouro -= itemObj.preco;
         imperador.inventario.push(nomeItem);
 
-        localStorage.setItem('save_imperador', JSON.stringify(imperador));
+        imperador.salvarEstado();
         atualizarTela();
-
         renderizarInventario();
 
         alert(`⚡ Item comprado com sucesso! Você adquiriu [${nomeItem}]`);
-        console.log("Inventário atual:", imperador.inventario);
-
     } else {
         alert("Tu ta passando fome, Imperador! Ouro insuficiente. Farme mais!");
     }
@@ -226,58 +223,29 @@ function usarItem(nomeItem) {
     let index = imperador.inventario.indexOf(nomeItem);
 
     if (index !== -1) {
-        if (nomeItem === 'Poção de Cura (P)') {
-            imperador.hpAtual += 50;
-            if (imperador.hpAtual > imperador.hpMaximo) {
-                imperador.hpAtual = imperador.hpMaximo; 
+        // O sistema busca o item no cofre
+        let itemInteligente = bancoDeItens[nomeItem];
+
+        if (itemInteligente) {
+            //O item recebe a ordem de agir sobre o imperador
+            itemInteligente.usar(imperador);
+            //Remove da bolsa
+            imperador.inventario.splice(index, 1);
+            //Salva o estado atualizado
+            imperador.salvarEstado();
+            atualizarTela();
+            renderizarInventario();
+            //Se usou item, leva pancada, se foi fuga, escapa
+            if (emBatalha && !(itemInteligente instanceof MagiaFuga)) {
+                registrarLog(`Você usou [${nomeItem}]. O inimigo se prepara...`);
+                turnoDoMonstro(); 
             }
-            alert(`Você bebeu a Poção. Hp restaurado!`);
+        } else {
+            console.error("Item fantasma! O Sistema não reconhece: " + nomeItem);
         }
-       else if (nomeItem === 'Adaga Enferrujada') {
-            if (imperador.equipamentos.arma !== null) {
-                let armaAntiga = imperador.equipamentos.arma;
-                imperador.inventario.push(armaAntiga); 
-
-                if (armaAntiga === 'Adaga Enferrujada') {
-                    imperador.atributosBonus.forca -= 2;
-                } else if (armaAntiga === 'Livro Antigo') {
-                    imperador.atributosBonus.inteligencia -= 2;
-                }
-            }
-            
-            imperador.equipamentos.arma = 'Adaga Enferrujada';
-            
-            imperador.atributosBonus.forca += 2;
-            alert(`Adaga Equipada com sucesso, força aumentada em 2!`);
-        }
-        
-        else if (nomeItem === 'Livro Antigo') {
-            if (imperador.equipamentos.arma !== null) {
-                let armaAntiga = imperador.equipamentos.arma;
-                imperador.inventario.push(armaAntiga); 
-                
-                if (armaAntiga === 'Adaga Enferrujada') {
-                    imperador.atributosBonus.forca -= 2;
-                } else if (armaAntiga === 'Livro Antigo') {
-                    imperador.atributosBonus.inteligencia -= 2;
-                }
-            }
-            
-            imperador.equipamentos.arma = 'Livro Antigo';
-            
-            imperador.atributosBonus.inteligencia += 2;
-            alert(`Livro Antigo Equipado com sucesso, inteligência aumentada em 2!`);
-        }
-
-        imperador.inventario.splice(index, 1);
-
-        localStorage.setItem('save_imperador', JSON.stringify(imperador));
-        atualizarTela();
-
-        renderizarInventario(); 
     }
 }
-        
+
 function renderizarInventario() {
     let grade = document.getElementById('grade-inventario');
     if (!grade) return;
@@ -305,20 +273,254 @@ function renderizarInventario() {
 
 // Sistema de batalha 
 
-let monstroAtual = {
-    nome: "Goblin Saqueador",
-    nivel: 1,
-    hpAtual: 30,
-    hpMaximo: 30,
-    ataqueBase: 5,
-    xpDrop: 20,
-    ouroDrop: 15
+//ENTIDADE SECUNDÁRIA: OS INIMIGOS
+class Inimigo {
+//construtor
+    constructor(nome, nivel, hpMaximo, ataqueBase, xpDrop, ouroDrop) {
+        this.nome = nome;
+        this.nivel = nivel;
+        this.hpMaximo = hpMaximo;
+        this.hpAtual = hpMaximo;
+        this.ataqueBase = ataqueBase;
+        this.xpDrop = xpDrop;
+        this.ouroDrop = ouroDrop;
+        this.rank = this.calcularRank(nivel); //Assim que nascer, será calculado seu rank
+    }
+    // Classificação Top-Down
+    calcularRank(nivel) {
+        if (nivel >= 200) return "Monarca";
+        if (nivel >=100) return "S";
+        if (nivel >=76) return "A";
+        if (nivel >=51) return "B";
+        if (nivel >=26) return "C";
+        if (nivel >=11) return "D";
+        return "E";
+    }
+
+    // O monstro pode ter ações próprias no futuro
+    receberDano(dano) {
+        this.hpAtual -= dano;
+        if (this.hpAtual < 0) this.hpAtual = 0;
+    }
+}
+//Invocando monstros
+//Regras da realidade para cada Rank de Portal
+const regrasPortais = {
+    "E": { minLvl: 1, MaxLvl: 10, nomes: ["Goblin", "Morcego da Caverna", "Slime"]},
+    "D": { minLvl: 11, MaxLvl: 25, nomes: ["Orc Guerreiro", "Lobo das Sombras", "Zumbi"]},
+    "C": { minLvl: 26, MaxLvl: 50, nomes: ["Lobo Alfa", "Golem de Pedra", "Vampiro Inferior"]},
+    "B": { minLvl: 51, MaxLvl: 75, nomes: ["Cavaleiro Espectral", "Golem de Metal", "Vampiro Superior"]},
+    "A": { minLvl: 76, MaxLvl: 100, nomes: ["Dragão Ancião", "Feiticeiro Sombrio", "Gigante de Ferro"]},
+    "S": { minLvl: 101, MaxLvl: 200, nomes: ["Deus da Guerra", "Lorde dos Pesadelos", "Titã de Fogo"]},
+};
+
+//Construir o monstro baseado no portal
+function abrirPortal(rankPortal) {
+    let regras = regrasPortais[rankPortal];
+
+    //Sorteia o nivel do monstro dentro da faixa do portal
+    let nivelSorteado = Math.floor(Math.random() * (regras.MaxLvl - regras.minLvl + 1)) + regras.minLvl;
+
+    //Escolhe um nome aleatório da lista do rank
+    let nomeMonstro = regras.nomes[Math.floor(Math.random() * regras.nomes.length)];
+
+    //Red Gate
+    let mutacao = Math.random(); //sorteia entre 0.00 e 0.99
+    let isPortalVermelho = mutacao <= 0.10;
+
+    if (isPortalVermelho) {
+        nivelSorteado += 15; //O nivel extrapola o limite
+        nomeMonstro = "Elite Sanguinário " + nomeMonstro;
+        alert("ALERTA DO SISTEMA: O Portal sofreu uma mutação! PORTAL VERMELHO DETECTADO!"); 
+    }
+    //Status escalam com o lvl
+    //Red Gate os multiplicadores dobram
+    let multiDificuldade = isPortalVermelho ? 2.5 : 1;
+
+    let hpForjado = Math.floor((nivelSorteado * 25) + Math.pow(nivelSorteado, 1.25) * 15) * multiDificuldade;
+    let atkForjado = Math.floor((nivelSorteado * 5) + Math.pow(nivelSorteado, 1.15) * 4) * multiDificuldade;
+    let xpForjado = Math.floor(Math.pow(nivelSorteado, 1.5) * 30) * multiDificuldade;
+    let ouroForjado = Math.floor(Math.pow(nivelSorteado, 1.3)* 15) * multiDificuldade;
+
+    // Instancia a criatura no mundo
+    monstroAtual = new Inimigo(nomeMonstro, nivelSorteado, hpForjado, atkForjado, xpForjado, ouroForjado);
+
+    //Prepara o cenário
+    emBatalha = true;
+    document.getElementById('tela-masmorra').style.display = 'block';
+
+    //Muda a cor do title se for red
+    let tituloMasmorra = document.getElementById('titulo-masmorra');
+    if (tituloMasmorra) {
+        tituloMasmorra.innerText = isPortalVermelho ? "PORTAL VERMELHO" : `Masmorra Rank ${rankPortal}`; 
+        tituloMasmorra.style.color = isPortalVermelho ? '#ef4444' : '#4ade80';
+        tituloMasmorra.style.textShadow = isPortalVermelho ? '0 0 15px red' : '0 0 10px green';
+    }
+
+    registrarLog(`Um ${monstroAtual.nome} surgiu das sombbras!`);
+    atualizarTelaMasmorra();
+}
+
+//Inicio vazio, vai ser definido ao entrar na masmorra
+let monstroAtual = null;
+let emBatalha = false;
+
+//ENTIDADE DE ITENS
+//Forma 1: Poção
+class Pocao {
+    constructor(nome, preco, curaHp) {
+        this.nome = nome;
+        this.preco = preco;
+        this.curaHp = curaHp;
+    }
+    //A poção sabe qm curar
+    usar(alvo) {
+        alvo.hpAtual += this.curaHp;
+        if (alvo.hpAtual > alvo.hpMaximo) alvo.hpAtual = alvo.hpMaximo;
+        alert(`Você bebeu a [${this.nome}]. HP restaurado!`);
+    }
+}
+//Forma 2: Armas
+class Arma {
+    constructor(nome, preco, bonusForca, bonusInteligencia, bonusAgilidade) {
+        this.nome = nome;
+        this.preco = preco;
+        this.bonusForca = bonusForca;
+        this.bonusInteligencia = bonusInteligencia;
+        this.bonusAgilidade = bonusAgilidade;
+    }
+
+    //Arma sabe como equipar e lidar com armas antigas
+    usar(alvo) {
+        //Se não existir gaveta de bonus, irei cira-la
+        if (!alvo.atributosBonus) {
+            alvo.atributosBonus = { forca: 0, inteligencia: 0, agilidade: 0, vitalidade: 0 };
+        }
+
+        //Se ja tem uma, guarda na bolsa e remove o bonus
+        if (alvo.equipamentos.arma !== null) {
+            let nomeArmaAntiga = alvo.equipamentos.arma;
+            let armaAntigaObj = bancoDeItens[nomeArmaAntiga]; //puxa dado arma antiga
+
+            alvo.inventario.push(nomeArmaAntiga); //guarda na bag
+
+            if (armaAntigaObj) {
+                alvo.atributosBonus.forca -= armaAntigaObj.bonusForca; //remove buff antigo
+                alvo.atributosBonus.inteligencia -= armaAntigaObj.bonusInteligencia; //msm coisa pra int
+
+                //Impedir que os atributos bônus fiquem negativos
+                if (alvo.atributosBonus.forca < 0) alvo.atributosBonus.forca = 0;
+                if (alvo.atributosBonus.inteligencia < 0) alvo.atributosBonus.inteligencia = 0;
+            }   
+        }
+        //Equipa a nova arma e aplica o bonus
+        alvo.equipamentos.arma = this.nome;
+        alvo.atributosBonus.forca += this.bonusForca;
+        alvo.atributosBonus.inteligencia += this.bonusInteligencia;
+
+        alert (`[${this.nome}] equipada com sucesso! Força +${this.bonusForca}, Inteligencia +${this.bonusInteligencia}`);
+    }
+}
+//Forma 3: Armaduras
+class Armadura {
+    constructor(nome, preco, bonusVitalidade) {
+        this.nome = nome;
+        this.preco = preco;
+        this.bonusVitalidade = bonusVitalidade;
+    }
+
+    usar(alvo) {
+        if (!alvo.atributosBonus) alvo.atributoBonus = { forca: 0, inteligencia: 0, agilidade: 0, vitalidade: 0 };
+        if (!alvo.equipamentos) alvo.equipamentos = { arma: null, armadura: null, acessorio: null };
+
+        //Troca de armadura
+        if (alvo.equipamentos.armadura !== null) {
+            let itemAntigo = bancoDeItens[alvo.equipamentos.armadura];
+            alvo.inventario.push(alvo.equipamentos.armadura);
+            if (itemAntigo) alvo.atributosBonus.vitalidade -= itemAntigo.bonusVitalidade;
+        }
+
+        alvo.equipamentos.armadura = this.nome;
+        alvo.atributosBonus.vitalidade += this.bonusVitalidade;
+
+        //Recalcula HP máximo após mudar Vitalidade
+        alvo.hpMaximo = 100 + ((alvo.atributos.vitalidade + alvo.atributosBonus.vitalidade) * 10);
+
+        alert(`[${this.nome}] equipada! Vitalidade +${this.bonusVitalidade}.`);
+    }
+}
+//Forma 4: Acessorio
+class Acessorio {
+    constructor(nome, preco, bonusAgi, bonusInt) {
+        this.nome = nome;
+        this.preco = preco;
+        this.bonusAgilidade = bonusAgi;
+        this.bonusInteligencia = bonusInt;
+    }
+
+    usar(alvo) {
+        if (!alvo.atributosBonus) alvo.atributosBonus ={ forca: 0, inteligencia: 0, agilidade: 0, vitalidade: 0 };
+        if (alvo.equipamentos.acessorio !== null) {
+            let itemAntigo = bancoDeItens[alvo.equipamentos.acessorio];
+            alvo.inventario.push(alvo.equipamentos.acessorio);
+            if (itemAntigo) {
+                alvo.atributosBonus.agilidade -= itemAntigo.bonusAgilidade;
+                alvo.atributosBonus.inteligencia -= itemAntigo.bonusInteligencia;
+            }
+        }
+        alvo.equipamentos.acessorio = this.nome;
+        alvo.atributosBonus.agilidade += this.bonusAgilidade;
+        alvo.atributosBonus.inteligencia += this.bonusInteligencia;
+
+        alert (`${this.nome} equipado! Agilidade +${this.bonusAgilidade}, Inteligencia +${this.bonusInteligencia}.`);
+    }
+}
+//Pra dar fuga
+class MagiaFuga {
+    constructor(nome, preco) {
+        this.nome = nome;
+        this.preco = preco;
+    }
+
+    usar(alvo) {
+        alert(`Você rasgou o [${this.nome}]! A magia envolve seu corpo e você é teletransportado para fora da masmorra.`);
+        fugirMasmorra();
+        if (monstroAtual) monstroAtual.hpAtual = monstroAtual.hpMaximo; // Pra resetar o mob
+        atualizarTelaMasmorra();
+    }
+}
+
+//Cofre de itens
+const bancoDeItens = {
+    // Poções (Nome, Preço, Cura))
+    "Poção de Cura (P)": new Pocao("Poção de Cura (P)", 30, 50),
+    "Poção de Cura (M)": new Pocao("Poção de Cura (M)", 80, 150),
+    "Poção de Cura (G)": new Pocao("Poção de Cura (G)", 200, 500),
+    //Armas (Nome, Preço, Força, Inteligencia)
+    "Adaga Enferrujada": new Arma("Adaga Enferrujada",100, 2, 0),
+    "Livro Antigo": new Arma("Livro Antigo", 100, 0, 2),
+    "Espada Longa do Cavaleiro": new Arma("Espada Longa do Cavaleiro", 350, 10, 0),
+    //Armaduras (Nome, Preço, Vitalidade)
+    "Armadura de Couro": new Armadura("Armadura de Couro", 150, 5),
+    "Armadura de Ferro": new Armadura("Armadura de Ferro", 500, 15),
+    //Acessorios (Nome, Preço, Bônus Agi, Bônus Int)
+    "Anel da Agilidade": new Acessorio("Anel da Agilidade", 120, 3, 0),
+    "Colar do Sábio": new Acessorio("Colar do Sábio", 200, 0, 8),
+    //Magias (Nome, Preço)
+    "Pergaminho de Fuga": new MagiaFuga("Pergaminho de Fuga", 200)
 };
 
 //Abrir portais
 function entrarMasmorra() {
+    //Escolhe um indice aleatório do bestiário
+    let indiceAleatorio = Math.floor(Math.random() * bestiario.length);
+    //Clono o monstro da lista para que o original não fique com hp baixo da próxima vez
+    let modelo = bestiario[indiceAleatorio];
+    monstroAtual = new Inimigo(modelo.nome, modelo.nivel, modelo.hpMaximo, modelo.ataqueBase, modelo.xpDrop, modelo.ouroDrop);
+
     document.getElementById('tela-masmorra').style.display = 'block';
-    document.getElementById('log-batalha').innerText = "A batalha começou! O que o Imperador fará?"
+    document.getElementById('log-batalha').innerText = `Um ${monstroAtual.nome} Rank ${monstroAtual.nivel} apareceu!`;
+
     atualizarTelaMasmorra(); 
 }
 
@@ -328,6 +530,15 @@ function registrarLog(mensagem) {
 }
 
 function atualizarTelaMasmorra(){
+    //Atualizar o status do monstro na tela da masmorra
+    let nomeMonstroEl = document.getElementById('monstro-nome');
+    let nivelMonstroEl = document.getElementById('monstro-nivel');
+
+    if (nomeMonstroEl) nomeMonstroEl.innerText = monstroAtual.nome;
+    if (nivelMonstroEl) {
+        nivelMonstroEl.innerText = `${monstroAtual.rank} (Nvl ${monstroAtual.nivel})`;
+    }
+
     document.getElementById('monstro-hp-texto').innerText = `${monstroAtual.hpAtual}/${monstroAtual.hpMaximo}`;
     let porcentagem = (monstroAtual.hpAtual / monstroAtual.hpMaximo) * 100;
     document.getElementById('monstro-hp-bar').style.width = porcentagem + '%';
@@ -341,24 +552,34 @@ function atualizarTelaMasmorra(){
         let porcentagemImperador = (imperador.hpAtual / imperador.hpMaximo) * 100;
         hpBarraBatalha.style.width = porcentagemImperador + '%';
     }    
+    emBatalha = true;
 }
 
 /**
  * Realiza o ciclo de combate por turnos entre o Jogador e o Monstro.
  * Implementa assincronicidade para simular o tempo de resposta da IA.
  */
-function atacarMonstro (){
+function atacarMonstro() {
     let forcaTotal = imperador.atributos.forca + (imperador.atributosBonus ? imperador.atributosBonus.forca : 0);
-    let danoImperador = forcaTotal * 2;
+    let agiTotal = imperador.atributos.agilidade + (imperador.atributosBonus ? imperador.atributosBonus.agilidade : 0);
+    
+    //Agi chance de critico com Cap de 100
+    let chanceCritico = Math.min(agiTotal * 1.5, 100); 
+    let isCrit = (Math.random() * 100) < chanceCritico;
+    
+    // Se for crítico, o dano é DUPLICADO!
+    let danoImperador = isCrit ? forcaTotal * 4 : forcaTotal * 2; 
 
-    monstroAtual.hpAtual -= danoImperador;
-    if (monstroAtual.hpAtual < 0) monstroAtual.hpAtual = 0; 
-
-    registrarLog(`Você atacou com precisão e causou ${danoImperador} de dano!`);
-    atualizarTelaMasmorra();/**
- * Atualiza os elementos visuais de HP/MP tanto na interface principal 
- * quanto no HUD específico da masmorra.
- */
+    monstroAtual.receberDano(danoImperador);
+    
+    // O Log de Batalha agora narra o acerto crítico
+    if (isCrit) {
+        registrarLog(` CRÍTICO! Você se moveu como um vulto e causou ${danoImperador} de dano!`);
+    } else {
+        registrarLog(`Você atacou com precisão e causou ${danoImperador} de dano!`);
+    }
+    
+    atualizarTelaMasmorra();
 
     if (monstroAtual.hpAtual <= 0) {
         registrarLog(`O ${monstroAtual.nome} foi abatido! Você adquiriu +${monstroAtual.xpDrop} XP e +${monstroAtual.ouroDrop} Ouro.`);
@@ -366,73 +587,103 @@ function atacarMonstro (){
         imperador.ouro += monstroAtual.ouroDrop;
 
         if (imperador.xp >= imperador.xpNecessario) {
-            subirDeNivel();
+            imperador.subirDeNivel();
+            alert(`Parabéns, Imperador! Você subiu para o nível ${imperador.nivel}! O Sistema reconhece o seu crescimento.`);
         }
 
-        localStorage.setItem('save_imperador', JSON.stringify(imperador));
+        imperador.salvarEstado();
         atualizarTela();
-
+        
         setTimeout(() => {
             fugirMasmorra();
             monstroAtual.hpAtual = monstroAtual.hpMaximo; 
             atualizarTelaMasmorra();
         }, 2000);
-    
         return; 
     }
     
-    setTimeout(() => {
-        let danoMonstro = monstroAtual.ataqueBase;
-        imperador.hpAtual -= danoMonstro;
-        if (imperador.hpAtual < 0) imperador.hpAtual = 0;
+    turnoDoMonstro();
+}
 
-        registrarLog(`O ${monstroAtual.nome} revidou furiosamente e causou ${danoMonstro} do seu HP!`);
+function turnoDoMonstro() {
+    if (!emBatalha || monstroAtual.hpAtual <= 0) return;
+
+    setTimeout(() => {
+        let agiTotal = imperador.atributos.agilidade + (imperador.atributosBonus ? imperador.atributosBonus.agilidade : 0);
+        
+        //  AGILIDADE: Chance de Esquiva (Máximo travado em 40% para o jogo não ficar fácil demais)
+        let chanceEsquiva = Math.min(agiTotal * 1.2, 40);
+        let isEsquiva = (Math.random() * 100) < chanceEsquiva;
+
+        if (isEsquiva) {
+            registrarLog(` ESQUIVA! O inimigo atacou o vazio. Seus reflexos são absolutos!`);
+        } else {
+            let danoMonstro = monstroAtual.ataqueBase;
+            imperador.hpAtual -= danoMonstro;
+            if (imperador.hpAtual < 0) imperador.hpAtual = 0;
+            registrarLog(` O ${monstroAtual.nome} revidou furiosamente e causou ${danoMonstro} de dano!`);
+        }
       
-        atualizarTela();
-        localStorage.setItem('save_imperador', JSON.stringify(imperador));
+        atualizarTela(); 
+        atualizarTelaMasmorra(); 
+        imperador.salvarEstado();
 
         if (imperador.hpAtual <= 0) {
             registrarLog(`A sua visão escurece . . . Você foi abatido.`);
-            alert("O Sistema ativou a proteção e te salvou. Você recebeu uma segunda chance ficando com 1 de HP!");
-
+            alert("O Sistema ativou a proteção e te salvou com 1 de HP!");
             imperador.hpAtual = 1;
-            localStorage.setItem('save_imperador', JSON.stringfy(imperador));
+            imperador.salvarEstado();
             atualizarTela();
-
             fugirMasmorra();
             monstroAtual.hpAtual = monstroAtual.hpMaximo; 
             atualizarTelaMasmorra();
         }
     }, 1000);
- }
+}
+
+ //Abra a bolsa na batalha
+ function abrirBolsaBatalha() {
+    let divBolsa = document.getElementById('bolsa-batalha');
+    let grade = document.getElementById('grade-bolsa-batalha');
+
+    //Toggle exibi...
+    if (divBolsa.style.display === 'block') {
+        divBolsa.style.display = 'none';
+        return;
+    }
+    divBolsa.style.display = 'block';
+    grade.innerHTML = '';
+
+    //Procura poções e magia na bolsa
+    let itensUteis = imperador.inventario.filter(nomeItem => {
+        let obj = bancoDeItens[nomeItem];
+        return obj instanceof Pocao || obj instanceof MagiaFuga;
+    });
+
+    if (itensUteis.length === 0) {
+        grade.innerHTML = '<p style="color: #777;">Nenhum item consumível disponível.</p>';
+        return;
+    }
+
+    // Cria os botões para usar os itens na hora
+    for (let item of itensUteis) {
+        let btn = document.createElement('button');
+        btn.className = 'btn-complete';
+        btn.style.padding = '5px 10px';
+        btn.style.fontSize = '0.9em';
+        btn.innerText = `Usar ${item}`;
+        
+        btn.onclick = function() {
+            divBolsa.style.display = 'none'; // Esconde a bolsa ao usar
+            usarItem(item); // Usa o item
+        };
+        grade.appendChild(btn);
+    }
+}
 
 function fugirMasmorra() {
     document.getElementById('tela-masmorra').style.display = 'none';
-}
-
-// O RITUAL DE EVOLUÇÃO
-function subirDeNivel() {
-    // Escalamento de xp
-    imperador.nivel += 1;
-    imperador.xp -= imperador.xpNecessario;
-    imperador.xpNecessario = Math.floor(imperador.xpNecessario * 1.5);
-
-    // Subiu de lvl ganhou
-    imperador.atributos.forca += 1;
-    imperador.atributos.inteligencia += 1;
-    imperador.atributos.agilidade += 1;
-    imperador.atributos.vitalidade += 1;
-
-    atualizarTela();
-
-    imperador.hpAtual = imperador.hpMaximo;
-    imperador.mpAtual = imperador.mpMaximo;
-
-    localStorage.setItem('save_imperador',JSON.stringify(imperador));
-    atualizarTela();
-
-    alert(`LVL UP! O Sistema reconhece sua supremacia,
-         Imperador!\n\nNível: ${imperador.nivel}\nTodos os atributos +1\nStatus Recovery ativado: HP e MP restaurados!`);
+    emBatalha = false;
 }
 
 atualizarTela();

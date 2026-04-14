@@ -123,7 +123,23 @@
                             <h3> Poção de Cura (P)</h3>
                             <p>Restaura 50 de HP<br>Custo: 30 Ouro</p>
                         </div>
-                        <button class="btn-complete" onclick="comprarItem(30, 'Poção de Cura (P)')">Comprar</button>
+                        <button class="btn-complete" onclick="comprarItem('Poção de Cura (P)')">Comprar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3> Poção de Cura (M)</h3>
+                            <p>Restaura 150 de HP<br>Custo: 80 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem('Poção de Cura (M)')">Comprar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3> Poção de Cura (G)</h3>
+                            <p>Restaura 500 de HP<br>Custo: 200 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem('Poção de Cura (G)')">Comprar</button>
                     </div>
 
                     <div class="quest-card" style="flex: 1; min-width: 250px;">
@@ -131,24 +147,64 @@
                             <h3> Adaga Enferrujada</h3>
                             <p>Arma inicial. +2 de Força.<br>Custo: 100 Ouro</p>
                         </div>
-                        <button class="btn-complete" onclick="comprarItem(100, 'Adaga Enferrujada')">Comprar</button>
+                        <button class="btn-complete" onclick="comprarItem('Adaga Enferrujada')">Comprar</button>
                     </div>
 
-                     <div class="quest-card" style="flex: 1; min-width: 250px;">
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
                             <h3> Livro Antigo</h3>
                             <p>Arma inicial. +2 de Inteligência.<br>Custo: 100 Ouro</p>
                         </div>
-                        <button class="btn-complete" onclick="comprarItem(100, 'Livro Antigo')">Comprar</button>
-                     </div>
+                        <button class="btn-complete" onclick="comprarItem('Livro Antigo')">Comprar</button>
+                    </div>
 
-                     <div class="quest-card" style="flex: 1; min-width: 250px">
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3> Espada Longa do Cavaleiro</h3>
+                            <p>Arma de Elite. +10 de Força.<br>Custo: 350 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem('Espada Longa do Cavaleiro')">Comprar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3> Armadura de Couro</h3>
+                            <p>Proteção básica. +5 de Vitalidade.<br>Custo: 150 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem('Armadura de Couro')">Comprar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3> Armadura de Ferro</h3>
+                            <p>Proteção intermediária. +15 de Vitalidade.<br>Custo: 500 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem('Armadura de Ferro')">Comprar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px;">
+                        <div class="quest-info">
+                            <h3> Anel da Agilidade</h3>
+                            <p>Aumenta a agilidade. +3 de Agilidade.<br>Custo: 120 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem('Anel da Agilidade')">Comprar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px">
+                        <div class="quest-info">
+                            <h3> Colar do Sábio</h3>
+                            <p>Aumenta a inteligência. +8 de Inteligência.<br>Custo: 200 Ouro</p>
+                        </div>
+                        <button class="btn-complete" onclick="comprarItem('Colar do Sábio')">Comprar</button>
+                    </div>
+
+                    <div class="quest-card" style="flex: 1; min-width: 250px">
                         <div class="quest-info">
                             <h3> Pergaminho de Fuga</h3>
                             <p>Permite fugir de uma Boss Fight.<br>Custo: 200 Ouro</p>
                         </div>
-                        <button class="btn-complete" onclick="comprarItem(200, 'Pergaminho de Fuga')">Comprar</button>
-                     </div>
+                        <button class="btn-complete" onclick="comprarItem('Pergaminho de Fuga')">Comprar</button>
+                    </div>
                 </div>
 
                 <div id="loja-real" class="quest-list" style="display: none; gap: 15px; flex-wrap: wrap;">
@@ -180,21 +236,17 @@
                 </div>
             </div>
 
-            <div class="quest-panel system-window" style="width: 100%;">
-                <h1 class="window-title">CAVERNA DOS GOBLINS</h1>
-                <div class="quest-list">
-                    <div class="quest-card">
-                        <div class="quest-info">
-                            <h3>Entrar na Caverna</h3>
-                            <p>Desafie os Goblins e ganhe XP e Ouro!<br>Recompensa: Variável</p>
-                        </div>
-                        <button id="btn-entrar-masmorra" class="btn-complete" onclick="entrarMasmorra()">Entrar</button>
-                    </div>
-                </div>
+        <div style="margin: 20px 0; padding: 15px; border: 1px solid #555; background-color: #1a1a1a; border-radius: 10px; text-align: center;">
+            <h3 style="color: #4ade80; margin-bottom: 15px;">Associação de Caçadores: Portais Disponíveis</h3>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn-complete" onclick="abrirPortal('E')" style="border-color: #9ca3af; color: #9ca3af;">Portal Rank E</button>
+                <button class="btn-complete" onclick="abrirPortal('D')" style="border-color: #60a5fa; color: #60a5fa;">Portal Rank D</button>
+                <button class="btn-complete" onclick="abrirPortal('C')" style="border-color: #c084fc; color: #c084fc;">Portal Rank C</button>
             </div>
+        </div>
 
     <div id="tela-masmorra" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 10, 10, 0.95); z-index: 1000; padding: 20px; color: white; text-align: center; overflow-y: auto;">
-        <h1 style="color: #ef4444; text-shadow: 0 0 10px red; margin-top: 20px; font-size: 2.5em;">Caverna dos Goblins</h1>
+        <h1 id="titulo-masmorra" style="color: #ef4444; text-shadow: 0 0 10px red; margin-top: 20px; font-size: 2.5em;">ZONA DE PERIGO</h1>
         
         <div style="margin: 30px auto; border: 2px solid #555; padding: 20px; border-radius: 10px; max-width: 400px; background-color: #1a1a1a; box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);">
             <h2 id="monstro-nome" style="color: #4ade80;">Goblin Saqueador</h2>
@@ -215,8 +267,14 @@
         </div>
         
         <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
-            <button onclick="atacarMonstro()" style="background-color: #3b82f6; color: white; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 1.1em; transition: 0.2s; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">🗡️ Atacar</button>
-            <button onclick="fugirMasmorra()" style="background-color: #555; color: white; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 1.1em;">🏃 Recuar</button>
+            <button onclick="atacarMonstro()" style="background-color: #3b82f6; color: white; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 1.1em; transition: 0.2s; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"> Atacar</button>
+            <button onclick="abrirBolsaBatalha()" style="background-color: #10b981; color: white; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 1.1em; transition: 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);"> Bolsa</button>
+        </div>
+        
+        <div id="bolsa-batalha" style="display: none; margin-top: 20px; padding: 15px; background-color: #222; border-radius: 10px; border: 1px solid #10b981;">
+            <h3 style="color: #10b981; margin-bottom: 10px; font-size: 1em;">Itens Consumíveis</h3>
+            <div id="grade-bolsa-batalha" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                </div>
         </div>
         
         <div id="log-batalha" style="margin-top: 40px; color: #d1d5db; font-style: italic; font-size: 1.2em; min-height: 50px; padding: 10px; border-left: 3px solid #3b82f6; max-width: 600px; margin-left: auto; margin-right: auto;">
