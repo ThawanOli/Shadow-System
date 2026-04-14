@@ -22,23 +22,28 @@ class Monarca {
    // O Feitiço agora é Async (Assíncrono) para conversar com a API
     async salvarEstado() {
         try {
-            // Dispara os dados para o servidor Python
-            await fetch('http://127.0.0.1:5000/salvar', {
+            //Gera o lacre antes de envia
+            const lacre = await gerarLacre(this);
+            const resposta = await fetch('http://127.0.0.1:5000/salvar', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this) // Empacota o Imperador e envia
-            });
-            console.log(" Save sincronizado com o Banco de Dados com sucesso!");
-            
-            // Mantemos o localStorage apenas como um backup de emergência
-            localStorage.setItem('save_imperador', JSON.stringify(this));
-        } catch (erro) {
-            console.error(" Falha na conexão com o Cérebro Central:", erro);
-            localStorage.setItem('save_imperador', JSON.stringify(this));
+                    'Content-Type': 'application/json',
+                    'X-Lacre-Integridade': lacre // Enviamos o selo aqui!
+            },
+            body: JSON.stringify(this)
+        });
+        if (resposta.ok) {
+            console.log("Save sincronizado e autenticado!");
+        } else {
+            console.error("Erro na autenticação do save!");
         }
+    } catch (erro) {
+        console.error("Falha na conexão:", erro);
+    } finally {
+        localStorage.setItem('save_imperador', JSON.stringify(this));
     }
+}
+           
     subirDeNivel() {
         this.nivel += 1;
         this.xp -= this.xpNecessario;
@@ -680,8 +685,19 @@ function fugirMasmorra() {
     emBatalha = false;
 }
 
-// MOTOR DE IGNIÇÃO BLINDADO
+// Função para gerar o Hash de integridade
+async function gerarLacre(dados) {
+    const chaveSecreta = "SENHA_ULTRA_SECRETA_DO_IMPERADOR"; // Nunca revele isso '-'
+    const mensagem = dados.nivel + dados.ouro + dados.xp + chaveSecreta;
+    
+    const encoder = new TextEncoder();
+    const data = encoder.encode(mensagem);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
+// MOTOR DE IGNIÇÃO BLINDADO
 async function carregarMundo() {
     try {
         let resposta = await fetch('http://127.0.0.1:5000/carregar');
