@@ -1,14 +1,8 @@
-// ==========================================
-// 👑 ENTIDADE PRINCIPAL: O MONARCA
-// ==========================================
+// ENTIDADE PRINCIPAL: O MONARCA
 class Monarca {
-    constructor() {
-        let save = JSON.parse(localStorage.getItem('save_imperador'));
-
-        if (save) {
-            Object.assign(this, save);
-        } else {
-            this.nome = "Thawan Oliveira";
+    constructor(nome) {
+        
+            this.nome = nome || "Thawan Oliveira";
             this.titulo = "Imperador das Rosas Azuis";
             this.nivel = 1;
             this.ouro = 0;
@@ -25,9 +19,25 @@ class Monarca {
             this.missoesConcluidas = [];
             this.ultimoAcesso = "";
         }
-    }
-    salvarEstado() {
-        localStorage.setItem('save_imperador', JSON.stringify(this));
+   // O Feitiço agora é Async (Assíncrono) para conversar com a API
+    async salvarEstado() {
+        try {
+            // Dispara os dados para o servidor Python
+            await fetch('http://127.0.0.1:5000/salvar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this) // Empacota o Imperador e envia
+            });
+            console.log(" Save sincronizado com o Banco de Dados com sucesso!");
+            
+            // Mantemos o localStorage apenas como um backup de emergência
+            localStorage.setItem('save_imperador', JSON.stringify(this));
+        } catch (erro) {
+            console.error(" Falha na conexão com o Cérebro Central:", erro);
+            localStorage.setItem('save_imperador', JSON.stringify(this));
+        }
     }
     subirDeNivel() {
         this.nivel += 1;
@@ -35,13 +45,14 @@ class Monarca {
         this.xpNecessario = Math.floor(this.xpNecessario * 1.5);
 
         // Status Recovery
-        this.atributos.forca += 1;
-        this.atributos.inteligencia += 1;
-        this.atributos.agilidade += 1;
-        this.atributos.vitalidade += 1;
+        this.atributos.forca += 2;
+        this.atributos.inteligencia += 2;
+        this.atributos.agilidade += 2;
+        this.atributos.vitalidade += 2;
 
         // Recalcula limites vitais baseados na nova vitalidade
         this.hpMaximo = 100 + (this.atributos.vitalidade * 10);
+        this.mpMaximo = 50 + (this.atributos.inteligencia * 5);
         this.hpAtual = this.hpMaximo;
         this.mpAtual = this.mpMaximo;
 
@@ -51,23 +62,6 @@ class Monarca {
 
 // Criando o ser vivo a partir do molde (A Instância)
 let imperador = new Monarca();
-
-// O RELÓGIO DO SISTEMA
-//Descobre que dia é hoje
-let dataDeHoje = new Date().toLocaleDateString('pt-BR');
-
-
-if (dataDeHoje !== imperador.ultimoAcesso) {
-    // Limpa a lista(Seta pra missões pendentes)
-    imperador.missoesConcluidas = [];
-
-    
-    imperador.ultimoAcesso = dataDeHoje;
-
-    imperador.salvarEstado();
-
-    console.log("Novo dia detectado! Missões resetadas, Imperador das Rosas Azuis!");
-}
 
 function atualizarTela() {
     
@@ -128,29 +122,26 @@ function atualizarTela() {
     document.getElementById('mp-bar').style.width = porcentagemMP + '%';
 } 
 
-function completarMissao(nomeMissao, xpRecompensa, ouroRecompensa, atributoAlvo, botao) {
-if (imperador.missoesConcluidas.includes(nomeMissao)) {
-    alert("Missão já concluída, Imperador!");
-    return; 
-}
-
+function completarMissao(nomeMissao, xpBase, ouroBase, atributoAlvo, botao) {
+    if (imperador.missoesConcluidas.includes(nomeMissao)) {
+        alert("Missão já concluída, Imperador!");
+        return; 
+    }
 imperador.missoesConcluidas.push(nomeMissao);
 
-console.log(imperador.missoesConcluidas);
-    imperador.xp += xpRecompensa;
-    imperador.ouro += ouroRecompensa;
+//Multiplicador das missões diárias
+let multiplicador = Math.max(1, Math.floor(Math.pow(imperador.nivel, 1.2)));
+let xpFinal = xpBase * multiplicador;
+let ouroFinal = ouroBase * multiplicador;
+//Adiciona as recompensas escaladas
+    imperador.xp += xpFinal;
+    imperador.ouro += ouroFinal;
     imperador.atributos[atributoAlvo] += 1;
 
     if (imperador.xp >= imperador.xpNecessario) {
         imperador.subirDeNivel();
         alert(`Parabéns, Imperador! Você subiu para o nível ${imperador.nivel}! Seus atributos aumentaram e seu poder cresce a cada dia!`);
     }
-    
-    let porcentagemHP = (imperador.hpAtual / imperador.hpMaximo) * 100;
-    document.getElementById('player-hp').style.width = porcentagemHP + '%';
-
-    let porcentagemMP = (imperador.mpAtual / imperador.mpMaximo) * 100;
-    document.getElementById('player-mp').style.width = porcentagemMP + '%';
 
     atualizarTela();
 
@@ -162,6 +153,9 @@ console.log(imperador.missoesConcluidas);
     botao.style.cursor = "not-allowed";
 
     imperador.salvarEstado();
+    //Relatório de bonus detalhado
+    alert (`Missão [${nomeMissao}] Concluída!\n\nRecompensa Base: ${xpBase} XP | ${ouroBase} Ouro\nMultiplicador de Autoridade (Nvl ${imperador.nivel}): 
+        x${multiplicador}\n\n Total Recebido: +${xpFinal} XP | +${ouroFinal} Ouro\nAtributo [${atributoAlvo.toUpperCase()}] aumentou em 1!`);
 }
 
 atualizarTela();
@@ -686,5 +680,37 @@ function fugirMasmorra() {
     emBatalha = false;
 }
 
-atualizarTela();
-renderizarInventario(); 
+// MOTOR DE IGNIÇÃO BLINDADO
+
+async function carregarMundo() {
+    try {
+        let resposta = await fetch('http://127.0.0.1:5000/carregar');
+        let dadosBanco = await resposta.json();
+        
+        if (dadosBanco && Object.keys(dadosBanco).length > 0) {
+            console.log(" Resgatando do Monólito SQLite (Nvl " + dadosBanco.nivel + ").");
+            imperador = new Monarca(dadosBanco.nome);
+            Object.assign(imperador, dadosBanco);
+        } else {
+            console.log(" Um novo Monarca surge.");
+            imperador = new Monarca("Thawan Oliveira");
+        }
+    } catch (erro) {
+        console.warn(" Servidor Python offline. Inicializando vazio.");
+        imperador = new Monarca("Thawan Oliveira");
+    }
+
+    //  A MAGIA DO TEMPO AGORA FICA AQUI (Só roda DEPOIS de carregar)
+    let dataAtual = new Date().toLocaleDateString();
+    if (imperador.ultimoAcesso !== dataAtual) {
+        console.log(`Novo dia detectado! Missões resetadas, ${imperador.titulo}!`);
+        imperador.missoesConcluidas = [];
+        imperador.ultimoAcesso = dataAtual;
+        imperador.salvarEstado(); // Salva o Nível correto no banco!
+    }
+
+    atualizarTela();
+    renderizarInventario();
+}
+
+carregarMundo();
