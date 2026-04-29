@@ -19,6 +19,23 @@ class Monarca {
             this.missoesConcluidas = [];
             this.ultimoAcesso = "";
         }
+
+    async carregarMundo() {
+        try {
+            const resposta = await fetch('http://127.0.0.1:5000/carregar');
+            const dados = await resposta.json();
+            if (dados && dados.nivel) {
+                this.nivel = dados.nivel;
+                this.ouro = dados.ouro;
+                this.xp = dados.xp;
+                this.hash_seguranca = dados.hash;
+                // Atualize outros atributos se necessário
+                console.log(" Status carregados do Monólito!");
+            }
+        } catch (erro) {
+            console.error("Servidor offline. Usando backup local.");
+        }
+    }
    // O Feitiço agora é Async (Assíncrono) para conversar com a API
     async salvarEstado() {
         try {
@@ -65,8 +82,195 @@ class Monarca {
     }
 }
 
-// Criando o ser vivo a partir do molde (A Instância)
+// --- O DESPERTAR AUTOMÁTICO DO IMPERADOR ---
+window.addEventListener("load", () => {
+    const usuarioSalvo = localStorage.getItem('usuario_shadow');
+    const overlay = document.getElementById('login-overlay');
+    atualizarBotaoMeditacao();
+    if (usuarioSalvo) {
+        imperador.nome = usuarioSalvo;
+        console.log("Sessão restaurada para:", usuarioSalvo);
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+        atualizarTela();
+    } else {
+        console.log("Nenhum usuario encontrado...")
+        if (overlay) {
+            overlay.style.display = 'flex';
+        }
+    }
+});
+
+// (A Instância)
 let imperador = new Monarca();
+async function iniciarSistema() {
+    await carregarLojaDoBanco();  
+}
+iniciarSistema();
+
+async function entrarNoReino() {
+    const user = document.getElementById('login-user').value;
+    const pass = document.getElementById('login-pass').value;
+
+    try {
+        const resposta = await fetch('http://127.0.0.1:5000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, senha: pass })
+        });
+
+        const resultado = await resposta.json();
+
+        if (resposta.ok) {
+            document.getElementById('login-overlay').style.display = 'none';
+            
+            imperador.nome = resultado.dados.username;
+            imperador.ouro = resultado.dados.ouro;
+            imperador.nivel = resultado.dados.nivel;
+            imperador.xp = resultado.dados.xp;
+            imperador.hash_seguranca = resultado.dados.hash;
+            imperador.inventario = resultado.dados.inventario || [];
+            localStorage.setItem('usuario_shadow', resultado.dados.username);
+            console.log("Login confirmado para:", imperador.nome);
+            atualizarTela(); 
+        } else {
+            alert(resultado.mensagem);
+        }
+    } catch (erro) {
+        console.error("Erro no portal de login:", erro);
+    }
+}
+
+async function cadastrarNoReino() {
+    const user = document.getElementById('reg-user').value;
+    const pass = document.getElementById('reg-pass').value;
+
+    if (!user || !pass) return alert("Preencha os campos, Imperador!");
+
+    const resposta = await fetch('http://127.0.0.1:5000/cadastrar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, senha: pass })
+    });
+
+    const resultado = await resposta.json();
+    alert(resultado.mensagem);
+}
+
+// Sistema de Conquistas 
+let conquistas = {
+    monstrosAbatidos: 0,
+    ouroAcumulado: 0,
+    missoesTotais: 0
+};
+
+// Carregar conquistas do LocalStorage 
+function carregarConquistas() {
+    const salvas = JSON.parse(localStorage.getItem('conquistas_shadow')) || { monstrosAbatidos: 0, ouroAcumulado: 0, missoesTotais: 0 };
+    conquistas = salvas;
+    atualizarPainelConquistas();
+}
+
+function renderizarMural() {
+    const container = document.getElementById('mural-conquistas');
+    if (!container) return;
+    container.innerHTML = '';
+
+    for (let id in bancoConquistas) {
+        const conquista = bancoConquistas[id];
+        const jaGanhou = imperador.missoesConcluidas.includes(id);
+
+        const div = document.createElement('div');
+        div.className = `medalha ${jaGanhou ? 'concluida' : ''}`;
+        div.innerHTML = `
+            <h4>${conquista.nome}</h4>
+            <p>${conquista.desc}</p>
+        `;
+        container.appendChild(div);
+    }
+}
+
+async function carregarLojaDoBanco() {
+    try {
+        const resposta = await fetch('http://127.0.0.1:5000/loja');
+        if (!resposta.ok) throw new Error("Falha ao buscar itens da loja");
+
+        const itensLoja = await resposta.json();
+        console.log(" Itens da loja carregados do Monólito:", itensLoja);
+        
+        renderizarLoja(itensLoja);
+    } catch (erro) {
+        console.error("Falha ao carregar o Mercado das Sombras:", erro);
+    }
+}
+
+async function comprarNoBanco(idItem) {
+    const nomeUsuario = imperador.nome || localStorage.getItem('usuario_shadow');
+    
+    if (!nomeUsuario) {
+        alert("Erro: Usuario nao identificado.");
+        return;
+    }
+
+    if (!idItem) {
+        console.error("Erro: idItem nao foi passado para a funcao.");
+        return;
+    }
+
+    try {
+        const resposta = await fetch('http://127.0.0.1:5000/comprar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                id_item: idItem, 
+                username: nomeUsuario 
+            })
+        });
+
+        const resultado = await resposta.json();
+
+        if (resposta.ok) {
+            imperador.ouro = resultado.novo_ouro;
+            imperador.inventario.push(resultado.item_nome);
+            renderizarInventario();
+            
+            atualizarTela();
+            alert("Compra realizada com sucesso.");
+        } else {
+            alert("Erro do Servidor: " + resultado.mensagem);
+        }
+    } catch (erro) {
+        console.error("Falha na comunicacao:", erro);
+    }
+}
+
+function renderizarLoja(itens) {
+    const container = document.getElementById('loja-virtual');
+    if (!container) return;
+    container.innerHTML = '';
+
+    itens.forEach(item => {
+        // Log 
+        console.log("Processando item da loja:", item);
+        const div = document.createElement('div');
+        div.className = 'quest-card';
+        
+        // Use item.id ou item[0] 
+        const idReal = item.id !== undefined ? item.id : item[0];
+        console.log("Dado do item:", item);
+        div.innerHTML = `
+            <div class="quest-info">
+                <h3>${item.nome || item[1]}</h3>
+                <p>${item.descricao || item[3]} <br>Custo: ${item.preco || item[2]} Ouro</p>
+            </div>
+            <button type="button" class="btn-complete" onclick="comprarNoBanco(${idReal})">
+                Comprar
+            </button>
+        `;
+        container.appendChild(div);
+    });
+}
 
 function atualizarTela() {
     
@@ -90,15 +294,25 @@ function atualizarTela() {
     if (imperador.hpAtual > imperador.hpMaximo) imperador.hpAtual = imperador.hpMaximo;
     if (imperador.mpAtual > imperador.mpMaximo) imperador.mpAtual = imperador.mpMaximo;
 
-    
     document.getElementById('attr-forca').innerText = forcaTotal;
     document.getElementById('attr-inteligencia').innerText = intTotal;
     document.getElementById('attr-agilidade').innerText = agiTotal;
     document.getElementById('attr-vitalidade').innerText = vitTotal;
 
-    document.getElementById('slot-arma').innerText = imperador.equipamentos.arma ? imperador.equipamentos.arma : "Nenhuma";
-    document.getElementById('slot-armadura').innerText = imperador.equipamentos.armadura ? imperador.equipamentos.armadura : "Nenhuma";
-    document.getElementById('slot-acessorio').innerText = imperador.equipamentos.acessorio ? imperador.equipamentos.acessorio : "Nenhuma";
+    // Lógica equipamentos
+    let estiloBtn = `class="btn-complete" style="padding: 0px 5px; font-size: 0.8em; margin-left: 5px; cursor: pointer;"`;
+
+    document.getElementById('slot-arma').innerHTML = imperador.equipamentos.arma 
+        ? `${imperador.equipamentos.arma} <button onclick="desequiparItem('arma')" ${estiloBtn}>X</button>` 
+        : "Nenhuma";
+
+    document.getElementById('slot-armadura').innerHTML = imperador.equipamentos.armadura 
+        ? `${imperador.equipamentos.armadura} <button onclick="desequiparItem('armadura')" ${estiloBtn}>X</button>` 
+        : "Nenhuma";
+
+    document.getElementById('slot-acessorio').innerHTML = imperador.equipamentos.acessorio 
+        ? `${imperador.equipamentos.acessorio} <button onclick="desequiparItem('acessorio')" ${estiloBtn}>X</button>` 
+        : "Nenhuma";
 
     let porcentagemXP = (imperador.xp / imperador.xpNecessario) * 100;
     document.getElementById('xp-bar').style.width = porcentagemXP + '%';
@@ -125,45 +339,204 @@ function atualizarTela() {
 
     let porcentagemMP = (imperador.mpAtual / imperador.mpMaximo) * 100;
     document.getElementById('mp-bar').style.width = porcentagemMP + '%';
+
+    function verificarConquistas() {
+        let houveConquista = false;
+
+        for (let id in bancoConquistas) {
+            let conquista = bancoConquistas[id];
+
+            // Se o Imperador atingiu o requisito e ainda não tem a medalha
+            if (conquista.req() && !imperador.missoesConcluidas.includes(id)) {
+                
+                // Aplica Bônus de Atributos
+                if (conquista.bonus) {
+                    for (let atributo in conquista.bonus) {
+                        if (imperador.atributos[atributo] !== undefined) {
+                            imperador.atributos[atributo] += conquista.bonus[atributo];
+                        }
+                    }
+                }
+
+                // Registra a conquista no histórico
+                imperador.missoesConcluidas.push(id);
+                registrarLog(`🏆 CONQUISTA ALCANÇADA: [${conquista.nome}]!`);
+                alert(`🏆 CONQUISTA LENDÁRIA!\n${conquista.nome}: ${conquista.desc}`);
+                houveConquista = true;
+            }
+        }
+
+        if (houveConquista) {
+            imperador.salvarEstado();
+            atualizarTela();
+        }
+    }
 } 
 
-function completarMissao(nomeMissao, xpBase, ouroBase, atributoAlvo, botao) {
-    if (imperador.missoesConcluidas.includes(nomeMissao)) {
-        alert("Missão já concluída, Imperador!");
-        return; 
-    }
-imperador.missoesConcluidas.push(nomeMissao);
-
-//Multiplicador das missões diárias
-let multiplicador = Math.max(1, Math.floor(Math.pow(imperador.nivel, 1.2)));
-let xpFinal = xpBase * multiplicador;
-let ouroFinal = ouroBase * multiplicador;
-//Adiciona as recompensas escaladas
-    imperador.xp += xpFinal;
-    imperador.ouro += ouroFinal;
-    imperador.atributos[atributoAlvo] += 1;
-
-    if (imperador.xp >= imperador.xpNecessario) {
-        imperador.subirDeNivel();
-        alert(`Parabéns, Imperador! Você subiu para o nível ${imperador.nivel}! Seus atributos aumentaram e seu poder cresce a cada dia!`);
+function meditar() {
+    if (emBatalha) {
+        alert("Você não pode meditar em combate!");
+        return;
     }
 
-    atualizarTela();
+    let agora = new Date().getTime();
+    let ultimoDescanso = localStorage.getItem('tempo_meditacao') || 0;
+    let tempoEspera = 5 * 60 * 1000; // 5 minutos em milisegundos
 
-    botao.innerText = "Concluída";
-    botao.disabled = true;
-    botao.style.color = "#555";
-    botao.style.borderColor = "#555";
-    botao.style.boxShadow = "none";
-    botao.style.cursor = "not-allowed";
+    if (agora - ultimoDescanso < tempoEspera) {
+        // Se ainda está em cooldown, não faz nada 
+        return;
+    }
 
+    if (imperador.hpAtual >= imperador.hpMaximo && imperador.mpAtual >= imperador.mpMaximo) {
+        alert("Sua energia já está plena.");
+        return;
+    }
+
+    // Lógica de Cura
+    let curaHp = Math.floor(imperador.hpMaximo * 0.3); 
+    let curaMp = Math.floor(imperador.mpMaximo * 0.3);
+    imperador.hpAtual = Math.min(imperador.hpAtual + curaHp, imperador.hpMaximo);
+    imperador.mpAtual = Math.min(imperador.mpAtual + curaMp, imperador.mpMaximo);
+
+    localStorage.setItem('tempo_meditacao', agora);
     imperador.salvarEstado();
-    //Relatório de bonus detalhado
-    alert (`Missão [${nomeMissao}] Concluída!\n\nRecompensa Base: ${xpBase} XP | ${ouroBase} Ouro\nMultiplicador de Autoridade (Nvl ${imperador.nivel}): 
-        x${multiplicador}\n\n Total Recebido: +${xpFinal} XP | +${ouroFinal} Ouro\nAtributo [${atributoAlvo.toUpperCase()}] aumentou em 1!`);
+    atualizarTela();
+    
+    atualizarBotaoMeditacao(); 
+    alert(` Meditação concluída! +${curaHp} HP e +${curaMp} MP.`);
 }
 
+function atualizarBotaoMeditacao() {
+    const btn = document.getElementById('btn-meditar'); 
+    if (!btn) return;
+
+    const tempoEspera = 5 * 60 * 1000;
+    
+    const intervalo = setInterval(() => {
+        let agora = new Date().getTime();
+        let ultimoDescanso = localStorage.getItem('tempo_meditacao') || 0;
+        let tempoPassado = agora - ultimoDescanso;
+        let restante = tempoEspera - (agora - ultimoDescanso);
+
+        if (restante > 0) {
+            // Calcula minutos e segundos
+            let min = Math.floor(restante / 60000);
+            let seg = Math.floor((restante % 60000) / 1000);
+            
+            btn.innerText = `Aguarde: ${min}:${seg < 10 ? '0' : ''}${seg}`;
+            btn.disabled = true;
+            btn.style.opacity = "0.6";
+            btn.style.cursor = "not-allowed";
+        } else {
+            // Cooldown terminou
+            btn.innerText = "Meditar";
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
+            clearInterval(intervalo);
+        }
+    }, 1000);
+}
+
+async function completarMissao(nomeMissao, xpBase, ouroBase, atributoAlvo, botao) {
+    //verifi spam
+    if (imperador.missoesConcluidas.includes(nomeMissao)) {
+        alert("Missão já concluída, Imperador!");
+        return;
+    }
+    //Lógica multiplicador
+    let multiplicador = Math.max(1, Math.floor(Math.pow(imperador.nivel, 1.2)));
+    let xpFinal = xpBase * multiplicador;
+    let ouroFinal = ouroBase * multiplicador;
+
+    try {
+        //Envio para o server
+        const resposta = await fetch('http://127.0.0.1:5000/completar_missao', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                username: imperador.nome,
+                xp: xpFinal,
+                ouro: ouroFinal,
+                atributo: atributoAlvo,
+                missao_nome: nomeMissao
+            })
+        });
+
+        const resultado = await resposta.json();
+        if (resposta.ok) {
+            imperador.xp = resultado.xp;
+            imperador.ouro = resultado.ouro;
+            imperador.missoesConcluidas.push(nomeMissao);
+            imperador.atributos[atributoAlvo] += 1;
+            if (imperador.xp >= imperador.xpNecessario) {
+                imperador.subirDeNivel();
+                alert(` O Monólito ressoa! Você subiu para o nível ${imperador.nivel}!`);
+            }
+            alert(` Missão registrada! +${xpFinal} XP | +${ouroFinal} Ouro`);
+            atualizarTela();
+
+            botao.innerText = "Concluída";
+            botao.disabled = true;
+            botao.style.color = "#555";
+            botao.style.borderColor = "#555";
+            botao.style.boxShadow = "none";
+            botao.style.cursor = "not-allowed";
+        } else {
+            alert(` Erro no Monólito: ${resultado.mensagem}`);
+        }
+    } catch (erro) {
+        console.error("Erro na comunicação:", erro);
+        alert("A conexão com o reino falhou.");
+    }
+}
 atualizarTela();
+
+// MISSÃO REPETÍVEL: 
+function completarMissaoRepetivel(nome, xpBase, ouroBase, atributo) {
+    imperador.xp += xpBase;
+    imperador.ouro += ouroBase;
+    
+    // Pequena chance de ganhar atributo em missões repetíveis 
+    if (Math.random() < 0.1) {
+        imperador.atributos[atributo] += 1;
+        registrarLog(` Treino intenso! Sua ${atributo} subiu naturalmente!`);
+    }
+
+    if (imperador.xp >= imperador.xpNecessario) imperador.subirDeNivel();
+    
+    registrarLog(` ${nome} concluído! +${xpBase} XP`);
+    atualizarTela();
+    imperador.salvarEstado();
+}
+
+// PROGRESSÃO: Chamada dentro de outras funções 
+function progredirConquista(tipo, valor) {
+    if (tipo === 'monstros') conquistas.monstrosAbatidos += valor;
+    if (tipo === 'ouro') conquistas.ouroAcumulado += valor;
+    
+    // Verifica se completou a meta
+    if (conquistas.monstrosAbatidos === 100) {
+        imperador.atributos.forca += 10;
+        alert(" CONQUISTA ALCANÇADA: Carniceiro de Portais! +10 Força Permanente.");
+    }
+    
+    localStorage.setItem('conquistas_shadow', JSON.stringify(conquistas));
+    atualizarPainelConquistas();
+}
+
+function atualizarVisualElite() {
+    // Exemplo para a conquista de monstros
+    const barra = document.getElementById('prog-monstros');
+    const texto = document.getElementById('status-monstros');
+    
+    if(barra && texto) {
+        let progresso = (conquistas.monstrosAbatidos / 100) * 100;
+        barra.style.width = Math.min(progresso, 100) + "%";
+        texto.innerText = `${conquistas.monstrosAbatidos} / 100 Abatidos`;
+    }
+}
 
 function comprarItem(nomeItem) {
     console.log("O HTML enviou o nome:", nomeItem);
@@ -242,6 +615,40 @@ function usarItem(nomeItem) {
         } else {
             console.error("Item fantasma! O Sistema não reconhece: " + nomeItem);
         }
+    }
+}
+
+function desequiparItem(tipoSlot) {
+    let nomeItem = imperador.equipamentos[tipoSlot];
+
+    if (!nomeItem || nomeItem === "Nenhuma") return;
+
+    let itemObj = bancoDeItens[nomeItem];
+    
+    if (itemObj) {
+        // REMOÇÃO DE BÔNUS 
+        if (itemObj.bonusForca) imperador.atributosBonus.forca -= itemObj.bonusForca;
+        if (itemObj.bonusAgilidade) imperador.atributosBonus.agilidade -= itemObj.bonusAgilidade;
+        if (itemObj.bonusInteligencia) imperador.atributosBonus.inteligencia -= itemObj.bonusInteligencia;
+        if (itemObj.bonusVitalidade) {
+            imperador.atributosBonus.vitalidade -= itemObj.bonusVitalidade;
+            // Recalcula o HP Máximo imediatamente ao tirar a armadura
+            imperador.hpMaximo = 100 + ((imperador.atributos.vitalidade + imperador.atributosBonus.vitalidade) * 10);
+            if (imperador.hpAtual > imperador.hpMaximo) imperador.hpAtual = imperador.hpMaximo;
+        }
+        // Garante que nada fique negativo
+        if (imperador.atributosBonus.forca < 0) imperador.atributosBonus.forca = 0;
+        if (imperador.atributosBonus.agilidade < 0) imperador.atributosBonus.agilidade = 0;
+        if (imperador.atributosBonus.inteligencia < 0) imperador.atributosBonus.inteligencia = 0;
+        if (imperador.atributosBonus.vitalidade < 0) imperador.atributosBonus.vitalidade = 0;
+
+        imperador.inventario.push(nomeItem);
+        imperador.equipamentos[tipoSlot] = null;
+        imperador.salvarEstado();
+        atualizarTela();
+        renderizarInventario();
+
+        alert(`[${nomeItem}] foi guardado na bolsa.`);
     }
 }
 
@@ -387,6 +794,7 @@ class Arma {
         this.bonusForca = bonusForca;
         this.bonusInteligencia = bonusInteligencia;
         this.bonusAgilidade = bonusAgilidade;
+        this.tipo = 'arma';
     }
 
     //Arma sabe como equipar e lidar com armas antigas
@@ -405,22 +813,35 @@ class Arma {
 
             if (armaAntigaObj) {
                 alvo.atributosBonus.forca -= armaAntigaObj.bonusForca; //remove buff antigo
+                alvo.atributosBonus.agilidade -= armaAntigaObj.bonusAgilidade;
                 alvo.atributosBonus.inteligencia -= armaAntigaObj.bonusInteligencia; //msm coisa pra int
-
+                
                 //Impedir que os atributos bônus fiquem negativos
                 if (alvo.atributosBonus.forca < 0) alvo.atributosBonus.forca = 0;
+                if (alvo.atributosBonus.agilidade < 0) alvo.atributosBonus.agilidade = 0;
                 if (alvo.atributosBonus.inteligencia < 0) alvo.atributosBonus.inteligencia = 0;
             }   
         }
         //Equipa a nova arma e aplica o bonus
         alvo.equipamentos.arma = this.nome;
         alvo.atributosBonus.forca += this.bonusForca;
+        alvo.atributosBonus.agilidade += this.bonusAgilidade;
         alvo.atributosBonus.inteligencia += this.bonusInteligencia;
 
-        alert (`[${this.nome}] equipada com sucesso! Força +${this.bonusForca}, Inteligencia +${this.bonusInteligencia}`);
+        alert (`[${this.nome}] equipada com sucesso! Força +${this.bonusForca}, Agilidade +${this.bonusAgilidade}, Inteligencia +${this.bonusInteligencia}`);
     }
 }
-//Forma 3: Armaduras
+//Forma 3: Habilidades
+class Habilidade {
+    constructor(nome, custoMana, multiplicador, efeitoDesc) {
+        this.nome = nome;
+        this.custoMana = custoMana;
+        this.multiplicador = multiplicador; 
+        this.efeitoDesc = efeitoDesc;
+    }
+}
+
+//Forma 4: Armaduras
 class Armadura {
     constructor(nome, preco, bonusVitalidade) {
         this.nome = nome;
@@ -448,7 +869,7 @@ class Armadura {
         alert(`[${this.nome}] equipada! Vitalidade +${this.bonusVitalidade}.`);
     }
 }
-//Forma 4: Acessorio
+//Forma 5: Acessorio
 class Acessorio {
     constructor(nome, preco, bonusAgi, bonusInt) {
         this.nome = nome;
@@ -495,10 +916,10 @@ const bancoDeItens = {
     "Poção de Cura (P)": new Pocao("Poção de Cura (P)", 30, 50),
     "Poção de Cura (M)": new Pocao("Poção de Cura (M)", 80, 150),
     "Poção de Cura (G)": new Pocao("Poção de Cura (G)", 200, 500),
-    //Armas (Nome, Preço, Força, Inteligencia)
-    "Adaga Enferrujada": new Arma("Adaga Enferrujada",100, 2, 0),
-    "Livro Antigo": new Arma("Livro Antigo", 100, 0, 2),
-    "Espada Longa do Cavaleiro": new Arma("Espada Longa do Cavaleiro", 350, 10, 0),
+    // Armas (Nome, Preço, Força, Inteligência, Agilidade)
+    "Adaga Enferrujada": new Arma("Adaga Enferrujada", 100, 0, 0, 2),
+    "Livro Antigo": new Arma("Livro Antigo", 150, 0, 5, 0),
+    "Espada Longa do Cavaleiro": new Arma("Espada Longa do Cavaleiro", 350, 10, 0, 0),
     //Armaduras (Nome, Preço, Vitalidade)
     "Armadura de Couro": new Armadura("Armadura de Couro", 150, 5),
     "Armadura de Ferro": new Armadura("Armadura de Ferro", 500, 15),
@@ -507,6 +928,33 @@ const bancoDeItens = {
     "Colar do Sábio": new Acessorio("Colar do Sábio", 200, 0, 8),
     //Magias (Nome, Preço)
     "Pergaminho de Fuga": new MagiaFuga("Pergaminho de Fuga", 200)
+};
+
+//Cofre de habilidades
+const grimorio = {
+    "Seta de Mana": new Habilidade("Seta de Mana", 15, 1.8, "Dano mágico focado."),
+    "Explosão Arcana": new Habilidade("Explosão Arcana", 40, 3.5, "Dano massivo, mas gasta muita mana."),
+    "Dreno de Vida": new Habilidade("Dreno de Vida", 25, 1.2, "Causa dano e cura um pouco de HP.")
+};
+//Cofre conquistas
+const bancoConquistas = {
+    // COMBATE
+    "ACH_EXTERMINADOR": { nome: "Exterminador de Pragas", req: () => conquistas.monstrosAbatidos >= 50, bonus: { forca: 5 }, desc: "Abater 50 Monstros" },
+    "ACH_ELITE": { nome: "Carrasco de Elites", req: () => conquistas.elitesAbatidos >= 10, bonus: { agilidade: 10 }, desc: "Abater 10 Elites Sanguinários" },
+    "ACH_SOBERANO": { nome: "Soberano da Masmorra", req: () => conquistas.monstrosAbatidos >= 500, bonus: { forca: 15, agilidade: 15, inteligencia: 15, vitalidade: 15 }, desc: "Abater 500 Monstros Totais" },
+    
+    // PROSPERIDADE
+    "ACH_MAOS_OURO": { nome: "Mãos de Ouro", req: () => imperador.ouro >= 5000, bonus: { inteligencia: 5 }, desc: "Acumular 5.000 de Ouro" },
+    "ACH_CAPITALISTA": { nome: "Capitalista Arcano", req: () => conquistas.ouroGasto >= 10000, bonus: { ouroMult: 0.1 }, desc: "Gastar 10.000 Ouro na Loja" },
+    "ACH_VIRTUOSO": { nome: "O Virtuoso", req: () => imperador.missoesConcluidas.filter(m => m.includes("REAL")).length >= 5, bonus: { vitalidade: 20 }, desc: "Resgatar 5 Recompensas Reais" },
+    
+    // DISCIPLINA
+    "ACH_MENTE_INABALAVEL": { nome: "Mente Inabalável", req: () => conquistas.meditacoesTotais >= 50, bonus: { mpRegen: 2 }, desc: "Meditar 50 vezes" },
+    "ACH_ESFORCO": { nome: "Esforço Incansável", req: () => conquistas.repetiveisTotais >= 100, bonus: { vitalidade: 10 }, desc: "Concluir 100 Treinos Repetíveis" },
+    "ACH_ERUDITO": { nome: "Erudito das Sombras", req: () => imperador.atributos.inteligencia >= 20, bonus: { danoMagicoMult: 0.15 }, desc: "Alcançar 20 de Inteligência Base" },
+    
+    // SUPREMA
+    "ACH_MONARCA_DESPERTO": { nome: "O Despertar do Monarca", req: () => imperador.nivel >= 50, bonus: { todos: 25 }, desc: "Alcançar Nível 50" }
 };
 
 //Abrir portais
@@ -550,7 +998,15 @@ function atualizarTelaMasmorra(){
         hpTextoBatalha.innerText = `${imperador.hpAtual}/${imperador.hpMaximo}`;
         let porcentagemImperador = (imperador.hpAtual / imperador.hpMaximo) * 100;
         hpBarraBatalha.style.width = porcentagemImperador + '%';
-    }    
+    }
+    let mpTextoBatalha = document.getElementById('batalha-player-mp-texto');
+    let mpBarraBatalha = document.getElementById('batalha-player-mp-bar');
+
+    if (mpTextoBatalha && mpBarraBatalha) {
+        mpTextoBatalha.innerText = `${imperador.mpAtual}/${imperador.mpMaximo}`;
+        let porcentagemMP = (imperador.mpAtual / imperador.mpMaximo) * 100;
+        mpBarraBatalha.style.width = porcentagemMP + '%';
+    }
     emBatalha = true;
 }
 
@@ -561,21 +1017,27 @@ function atualizarTelaMasmorra(){
 function atacarMonstro() {
     let forcaTotal = imperador.atributos.forca + (imperador.atributosBonus ? imperador.atributosBonus.forca : 0);
     let agiTotal = imperador.atributos.agilidade + (imperador.atributosBonus ? imperador.atributosBonus.agilidade : 0);
-    
-    //Agi chance de critico com Cap de 100
-    let chanceCritico = Math.min(agiTotal * 1.5, 100); 
+    let intTotal = imperador.atributos.inteligencia + imperador.atributosBonus.inteligencia;
+    let chanceCritico = Math.min(agiTotal * 1.5, 100);
     let isCrit = (Math.random() * 100) < chanceCritico;
-    
-    // Se for crítico, o dano é DUPLICADO!
-    let danoImperador = isCrit ? forcaTotal * 4 : forcaTotal * 2; 
-
-    monstroAtual.receberDano(danoImperador);
+    let danoFinal = 0;
+    let armaEquipada = bancoDeItens[imperador.equipamentos.arma];
+    if (armaEquipada && armaEquipada.bonusInteligencia > 0) {
+        // Dano Mágico
+        danoFinal = Math.floor(Math.random() * 10) + intTotal;
+        console.log("Ataque Mágico desferido!");
+    } else {
+        // Dano Físico
+        danoFinal =isCrit ? (forcaTotal * 4) : (forcaTotal * 2);
+        console.log("Ataque Físico desferido!");
+    }
+    monstroAtual.receberDano(danoFinal);
     
     // O Log de Batalha agora narra o acerto crítico
     if (isCrit) {
-        registrarLog(` CRÍTICO! Você se moveu como um vulto e causou ${danoImperador} de dano!`);
+        registrarLog(` CRÍTICO! Você se moveu como um vulto e causou ${danoFinal} de dano!`);
     } else {
-        registrarLog(`Você atacou com precisão e causou ${danoImperador} de dano!`);
+        registrarLog(`Você atacou com precisão e causou ${danoFinal} de dano!`);
     }
     
     atualizarTelaMasmorra();
@@ -584,7 +1046,8 @@ function atacarMonstro() {
         registrarLog(`O ${monstroAtual.nome} foi abatido! Você adquiriu +${monstroAtual.xpDrop} XP e +${monstroAtual.ouroDrop} Ouro.`);
         imperador.xp += monstroAtual.xpDrop;
         imperador.ouro += monstroAtual.ouroDrop;
-
+        progredirConquista('monstros', 1); // Registra o abate
+        atualizarVisualElite(); // Atualiza a barra roxa imediatamente
         if (imperador.xp >= imperador.xpNecessario) {
             imperador.subirDeNivel();
             alert(`Parabéns, Imperador! Você subiu para o nível ${imperador.nivel}! O Sistema reconhece o seu crescimento.`);
@@ -604,14 +1067,41 @@ function atacarMonstro() {
     turnoDoMonstro();
 }
 
+function conjurarHabilidade(nomeHabilidade) {
+    let habilidade = grimorio[nomeHabilidade];
+    let intTotal = imperador.atributos.inteligencia + (imperador.atributosBonus.inteligencia || 0);
+
+    if (imperador.mpAtual < habilidade.custoMana) {
+        registrarLog(" Mana insuficiente para conjurar " + habilidade.nome + "!");
+        return;
+    }
+
+    imperador.mpAtual -= habilidade.custoMana;
+    let danoMagico = Math.floor(intTotal * habilidade.multiplicador) + Math.floor(Math.random() * 5);
+    monstroAtual.receberDano(danoMagico);
+    
+    // Efeito Especial (Ex: Dreno de Vida)
+    if (nomeHabilidade === "Dreno de Vida") {
+        let cura = Math.floor(danoMagico * 0.3);
+        imperador.hpAtual = Math.min(imperador.hpAtual + cura, imperador.hpMaximo);
+        registrarLog(` Você drenou ${cura} de vida do inimigo!`);
+    }
+
+    registrarLog(` [${habilidade.nome}] causou ${danoMagico} de dano arcano!`);
+    
+    atualizarTelaMasmorra();
+    if (monstroAtual.hp > 0) {
+        setTimeout(turnoDoMonstro, 1000); 
+    }
+}
+
 function turnoDoMonstro() {
     if (!emBatalha || monstroAtual.hpAtual <= 0) return;
 
     setTimeout(() => {
         let agiTotal = imperador.atributos.agilidade + (imperador.atributosBonus ? imperador.atributosBonus.agilidade : 0);
-        
-        //  AGILIDADE: Chance de Esquiva (Máximo travado em 40% para o jogo não ficar fácil demais)
-        let chanceEsquiva = Math.min(agiTotal * 1.2, 40);
+        //  AGILIDADE: Chance de Esquiva (Máximo travado em 50% para o jogo não ficar fácil demais)
+        let chanceEsquiva = Math.min(agiTotal * 1.2, 50);
         let isEsquiva = (Math.random() * 100) < chanceEsquiva;
 
         if (isEsquiva) {
@@ -688,8 +1178,7 @@ function fugirMasmorra() {
 // Função para gerar o Hash de integridade
 async function gerarLacre(dados) {
     const chaveSecreta = "SENHA_ULTRA_SECRETA_DO_IMPERADOR"; // Nunca revele isso '-'
-    const mensagem = dados.nivel + dados.ouro + dados.xp + chaveSecreta;
-    
+    const mensagem = String(dados.nivel) + String(dados.ouro) + String(dados.xp) + chaveSecreta;
     const encoder = new TextEncoder();
     const data = encoder.encode(mensagem);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -716,13 +1205,15 @@ async function carregarMundo() {
         imperador = new Monarca("Thawan Oliveira");
     }
 
-    //  A MAGIA DO TEMPO AGORA FICA AQUI (Só roda DEPOIS de carregar)
+    //  A MAGIA DO TEMPO 
     let dataAtual = new Date().toLocaleDateString();
     if (imperador.ultimoAcesso !== dataAtual) {
         console.log(`Novo dia detectado! Missões resetadas, ${imperador.titulo}!`);
         imperador.missoesConcluidas = [];
         imperador.ultimoAcesso = dataAtual;
-        imperador.salvarEstado(); // Salva o Nível correto no banco!
+        imperador.hpAtual = imperador.hpMaximo;
+        imperador.mpAtual = imperador.mpMaximo;
+        imperador.salvarEstado(); 
     }
 
     atualizarTela();

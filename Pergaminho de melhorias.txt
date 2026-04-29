@@ -5,3 +5,9 @@ Criptografia Anti-Trapaça (Cibersegurança): O localStorage é de fácil acesso
 O Despertar Mobile (Hospedagem Web): Fazer o deploy (colocar o site no ar) usando ferramentas gratuitas para que você possa acessar o Sistema diretamente do seu celular durante os seus turnos de trabalho ou entre as aulas, sincronizando perfeitamente.
 
 Sistema de Punição Diária: Se uma missão diária não for concluída antes da meia-noite, o Sistema debita HP ou aplica um "Status Negativo", assim como a Penalty Zone que o Sung Jinwoo enfrentou ao não correr os 10km.
+
+Bug da Batalha Fantasma: Investigar por que a luta encerra abruptamente (provavelmente um erro de lógica no setInterval ou falta de verificação de HP em tempo real).
+
+Mecânica de Ressurreição: Criar uma forma de recuperar vida sem depender apenas de poções (ex: descanso passivo ou HP mínimo ao renascer).
+
+Refatoração do Combate: Criar turnos mais claros e logs que expliquem por que a luta acabou.
