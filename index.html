@@ -5,190 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shadow System: Arise</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Michroma&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="login-overlay">
-        <div style="background: #1a1a1a; padding: 30px; border-radius: 10px; border: 1px solid #333; text-align: center; width: 300px;">
+        <div style="background: #1a1a1a; padding: 30px; border-radius: 10px; border: 1px solid #333; text-align: center; width: 300px; margin: 100px auto;">
             <h2 style="color: #4a90e2; margin-bottom: 20px;">Shadow System</h2>
             <section id="sessao-login">
                 <h2>Entrar no Império</h2>
                 <form id="form-login" onsubmit="event.preventDefault(); entrarNoReino();">
-                    <input type="text" id="login-user" placeholder="Usuário" autocomplete="username" required>
-                    <input type="password" id="login-pass" placeholder="Senha" autocomplete="current-password" required>
+                    <input type="text" id="login-user" placeholder="Usuário" required>
+                    <input type="password" id="login-pass" placeholder="Senha" required>
                     <button type="submit">Entrar</button>
                 </form>
             </section>
-
-            <hr>
-
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #333;">
             <section id="sessao-cadastro">
                 <h2>Fundar Novo Império</h2>
                 <form id="form-cadastro" onsubmit="event.preventDefault(); cadastrarNoReino();">
-                    <input type="text" id="reg-user" placeholder="Escolha seu nome de Imperador" autocomplete="username" required>
-                    <input type="password" id="reg-pass" placeholder="Defina sua senha" autocomplete="new-password" required>
+                    <input type="text" id="reg-user" placeholder="Nome de Imperador" required>
+                    <input type="password" id="reg-pass" placeholder="Senha" required>
                     <button type="submit">Cadastrar</button>
                 </form>
             </section>
+        </div>
     </div>
-    </div>
-    <div class="system-container">
-        
-        <div class="status-panel system-window" style="flex: 1; min-width: 380px;">
-            <h1 class="window-title">STATUS DO JOGADOR</h1>
 
-            <div class="player-info">
-                <h2>Nome: <span class="highlight" id="player-nome"></span></h2>
-                <h2>Título: <span class="highlight" id="player-titulo" style="color: #a855f7;"></span></h2>
-                <h2>Nível: <span class="highlight" id="player-level">1</span></h2>
-                <h2>Ouro: <span class="highlight" id="player-ouro">0</span></h2>
-            </div>
+    <div class="system-container" style="display: flex; gap: 20px; padding: 20px; align-items: flex-start; justify-content: center; max-width: 1450px; margin: 0 auto;">
 
-            <div class="bars-container">
-               <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">
-                 HP: <span id="player-hp">100/100</span>
-                </p>
-                <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
-                    <div id="hp-bar" style="width: 100%; background-color: #ff3333; height: 100%; border-radius: 5px;"></div>
+        <div class="column" id="col-status" style="flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 20px;">
+            <div class="status-panel system-window">
+                <h1 class="window-title">STATUS DO JOGADOR</h1>
+                <div class="player-info">
+                    <h2>Nome: <span class="highlight" id="player-nome"></span></h2>
+                    <h2>Título: <span class="highlight" id="player-titulo" style="color: #a855f7; font-variant: small-caps; text-transform: none;"></span></h2>
+                    <h2>Nível: <span class="highlight" id="player-level">1</span></h2>
+                    <h2>Ouro: <span class="highlight" id="player-ouro">0</span></h2>
                 </div>
 
-                <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">
-                     MP: <span id="player-mp">50/50</span>
-                </p>
-                <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px;">
-                <div id="mp-bar" style="width: 100%; background-color: #3366ff; height: 100%; border-radius: 5px;"></div>
+                <div class="bars-container">
+                    <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">HP: <span id="player-hp">100/100</span></p>
+                    <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
+                        <div id="hp-bar" style="width: 100%; background-color: #ff3333; height: 100%; border-radius: 5px;"></div>
+                    </div>
+                    <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">MP: <span id="player-mp">50/50</span></p>
+                    <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
+                        <div id="mp-bar" style="width: 100%; background-color: #3366ff; height: 100%; border-radius: 5px;"></div>
+                    </div>
+                    <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;"><span id="xp-text">XP: 0/100</span></p>
+                    <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px;">
+                        <div id="xp-bar" style="width: 0%; background-color: #f59e0b; height: 100%; border-radius: 5px;"></div>
+                    </div>
+                    <button id="btn-meditar" onclick="meditar()" class="btn-complete" style="width: 100%; margin-top: 15px;">Meditar (Recupera 30%)</button>
                 </div>
 
-                <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">
-                     <span id="xp-text">XP: 0/100</span>
-                </p>
-                <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
-                    <div id="xp-bar" style="width: 0%; background-color: #f59e0b; height: 100%; border-radius: 5px;"></div>
+                <div class="attributes-panel" style="margin-top: 20px;">
+                    <h3>ATRIBUTOS</h3>
+                    <ul>
+                        <li title="Aumenta seu dano físico nos ataques básicos.">Força <span id="attr-forca">10</span></li>
+                        <li title="Aumenta sua chance de esquiva e taxa de crítico.">Agilidade <span id="attr-agilidade">10</span></li>
+                        <li title="Aumenta seu MP Máximo e dano de feitiços.">Inteligência <span id="attr-inteligencia">10</span></li>
+                        <li title="Aumenta seu HP Máximo (1 Vit = 10 HP).">Vitalidade <span id="attr-vitalidade">10</span></li>
+                    </ul>
                 </div>
 
-                <button id="btn-meditar" onclick="meditar()" class="btn-complete" style="width: 100%; margin-top: 15px; background: rgba(0, 210, 255, 0.1); border-color: rgba(0, 210, 255, 0.5);">
-                     Meditar (Recupera 30% HP/MP)
-                </button>
-            </div>
-
-            <div class="attributes-panel">
-                <h3>ATRIBUTOS</h3>
-                <ul>
-                    <li title="Aumenta seu dano físico nos ataques básicos.">
-                        Força <span id="attr-forca">10</span>
-                    </li>
-                    <li title="Aumenta sua chance de esquiva e taxa de crítico.">
-                        Agilidade <span id="attr-agilidade">10</span>
-                    </li>
-                    <li title="Aumenta seu MP Máximo e dano de feitiços.">
-                        Inteligência <span id="attr-inteligencia">10</span>
-                    </li>
-                    <li title="Aumenta seu HP Máximo (1 Vit = 10 HP).">
-                        Vitalidade <span id="attr-vitalidade">10</span>
-                    </li>
-                </ul>
-            </div>
-            <br>
-
-            <div class="achievements-container">
-                <h3 style="color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);">MURAL DE CONQUISTAS</h3>
-                <div id="mural-conquistas" class="mural-grid"></div>
-            </div>
-
-            <div style="border-top: 1px dashed #00d2ff; padding-top: 10px; margin-top: 10px;">
-                <h3 style="font-size: 1em; color: #00d2ff;"> Arsenal Equipado</h3>
-                <p style="font-size: 0.9em;">Arma: <span id="slot-arma" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
-                <p style="font-size: 0.9em;">Armadura: <span id="slot-armadura" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
-                <p style="font-size: 0.9em;">Acessório: <span id="slot-acessorio" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
-            </div> <div class="inventory-panel" style="margin-top: 20px; border-top: 1px solid #00d2ff; padding-top: 15px;">
-                <h3>Inventário</h3>
-                <div id="grade-inventario" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-                    <p style="color: #555; font-size: 0.9em;">A bolsa está vazia.</p>
+                <div class="titles-panel" style="margin-top: 20px; border-top: 1px solid #333; padding-top: 10px;">
+                    <h3>Títulos Equipáveis</h3>
+                    <select id="select-titulo" onchange="equiparTitulo(this.value)" style="width: 100%; background: #111; color: #a855f7; border: 1px solid #a855f7; padding: 5px; border-radius: 5px;"></select>
+                    <p id="titulo-desc" style="font-size: 0.75rem; color: #a855f7; margin-top: 5px;"></p>
                 </div>
-             </div> </div> <div class="right-column" style="display: flex; flex-direction: column; gap: 20px; flex: 1.5;">
-                
+
+                <div style="border-top: 1px dashed #00d2ff; padding-top: 10px; margin-top: 10px;">
+                    <h3 style="font-size: 1em; color: #00d2ff;">Arsenal Equipado</h3>
+                    <p style="font-size: 0.9em;">Arma: <span id="slot-arma" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
+                    <p style="font-size: 0.9em;">Escudo: <span id="slot-escudo" class="highlight" style="color: #ff3366;">Nenhum</span></p>
+                    <p style="font-size: 0.9em;">Armadura: <span id="slot-armadura" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
+                    <p style="font-size: 0.9em;">Acessório: <span id="slot-acessorio" class="highlight" style="color: #ff3366;">Nenhuma</span></p>
+                </div>
+
+                <div class="inventory-panel" style="margin-top: 20px; border-top: 1px solid #00d2ff; padding-top: 15px;">
+                    <h3>Inventário</h3>
+                    <div id="grade-inventario" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <p style="color: #555; font-size: 0.9em;">A bolsa está vazia.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column" id="col-progress" style="flex: 1.2; min-width: 350px; display: flex; flex-direction: column; gap: 20px;">
             <div class="quest-panel system-window">
                 <h1 class="window-title">MISSÕES DIÁRIAS</h1>
                 <div class="quest-list">
                     <div class="quest-card">
                         <div class="quest-info">
                             <h3>[C] Treino de Força</h3>
-                            <p>Recompensa: 40 XP 10 Ouro | Evolui: Força</p>
+                            <p>40 XP | 10 Ouro | +1 Força</p>
                         </div>
-                        <butto type="button" id="btn-treino_forca" class="btn-complete" onclick="completarMissao('treino_forca', 40, 10, 'forca', this)">Completar</button>
+                        <button id="btn-treino_forca" class="btn-complete" onclick="completarMissao('treino_forca', 40, 10, 'forca', this)">Completar</button>
                     </div>
-
                     <div class="quest-card">
                         <div class="quest-info">
                             <h3>[C] Treino de Agilidade</h3>
-                            <p>Recompensa: 40 XP 10 Ouro | Evolui: Agilidade</p>
+                            <p>40 XP | 10 Ouro | +1 Agilidade</p>
                         </div>
-                        <button type="button" id="btn-treino_agilidade" class="btn-complete" onclick="completarMissao('treino_agilidade', 40, 10, 'agilidade', this)">Completar</button>
+                        <button id="btn-treino_agilidade" class="btn-complete" onclick="completarMissao('treino_agilidade', 40, 10, 'agilidade', this)">Completar</button>
                     </div>
-
                     <div class="quest-card">
                         <div class="quest-info">
-                        <h3>[B] Controle da Alimentação e Mente</h3>
-                        <p>Recompensa: 60 XP 20 Ouro | Evolui: Vitalidade</p>
+                            <h3>[B] Controle Mente e Corpo</h3>
+                            <p>60 XP | 20 Ouro | +1 Vitalidade</p>
                         </div>
-                        <button type="button" id="btn-controle_mente" class="btn-complete" onclick="completarMissao('controle_mente', 60, 20, 'vitalidade', this)">Completar</button>
+                        <button id="btn-controle_mente" class="btn-complete" onclick="completarMissao('controle_mente', 60, 20, 'vitalidade', this)">Completar</button>
                     </div>
-
                     <div class="quest-card">
                         <div class="quest-info">
-                            <h3>[B] Avançar no projeto de Python</h3>
-                            <p>Recompensa: 60 XP 20 Ouro | Evolui: Inteligência</p>
+                            <h3>[B] Projeto de Python</h3>
+                            <p>60 XP | 20 Ouro | +1 Inteligência</p>
                         </div>
-                        <button type="button" id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 20,'inteligencia', this)">Completar</button>
+                        <button id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 20, 'inteligencia', this)">Completar</button>
                     </div>
                 </div>
-            </div> 
-            <div class="quest-card elite">
-                <h3>CONQUISTA: CARNICEIRO DE PORTAIS</h3>
-                <p style="font-size: 0.8rem; color: #eee;">Abater 100 monstros nas masmorras.</p>
-                <div class="quest-progress-container">
-                    <div id="prog-monstros" class="quest-progress-fill" style="width: 45%;"></div>
-                </div>
-                <span class="quest-status-text" id="status-monstros">45 / 100 Abatidos</span>
-                <p style="font-size: 0.7rem; color: #a855f7; margin-top: 10px;">Recompensa: +10 Força Permanente</p>
             </div>
 
-            <div class="achievements-panel">
+        <div class="quest-card repetitive" style="border: 1px dashed #00d2ff; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="color: #00d2ff; margin: 0; font-size: 1rem;">TREINO DE RESISTÊNCIA</h3>
+                    <p style="font-size: 0.75rem; color: #aaa;">10 flexões (+20 XP +5 OURO)</p>
+                </div>
+                <button class="btn-complete" onclick="completarMissaoRepetivel('Treino Físico', 20, 5, 'vitalidade')">TREINAR</button>
+            </div>
+        
+
+            <div class="quest-card elite" style="border: 1px solid #a855f7; background: rgba(168, 85, 247, 0.05); padding: 15px; border-radius: 8px;">
+                <h3 style="color: #a855f7; margin: 0;">CONQUISTA: CARNICEIRO DE PORTAIS</h3>
+                <p style="font-size: 0.8rem; color: #eee; margin: 5px 0;">Abater 100 monstros nas masmorras.</p>
+                <div style="width: 100%; background: #111; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #333;">
+                    <div id="prog-monstros" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6d28d9, #a855f7); transition: width 0.5s;"></div>
+                </div>
+                <span id="status-monstros" style="display: block; text-align: right; font-size: 0.75rem; color: #aaa; margin-top: 5px;">0 / 100</span>
+            </div>
+
+            <div class="achievements-panel system-window">
                 <h3>CONQUISTAS DE ELITE</h3>
-                <ul>
-                    <li title="Abater o chefe final da masmorra rank S.">
-                        <strong>Matador de Deuses</strong>
-                        <small>Recompensa: Título 'O Divino' (+25 Força)</small>
-                    </li>
-                    <li title="Acumular ouro suficiente para comprar o reino.">
-                        <strong>Riqueza Eterna</strong>
-                        <small>Recompensa: Bónus passivo de +15% ouro.</small>
-                    </li>
-                    <li title="Alcançar o nível máximo do sistema.">
-                        <strong>Monarca Supremo</strong>
-                        <small>Recompensa: Desbloqueia a classe 'Sombra'.</small>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="quest-card repetitive">
-                <div class="quest-info">
-                    <h3 style="color: #00d2ff; font-size: 0.9rem; margin: 0;">TREINO DE RESISTÊNCIA</h3>
-                    <p style="font-size: 0.75rem; color: #aaa; margin: 5px 0 0 0;">Realizar 10 flexões. (+20 XP)</p>
+                <div id="mural-conquistas">
+                    <ul class="elite-grid-layout">
+                        <li title="Abater o chefe final da masmorra rank S.">
+                            <strong>Matador de Deuses</strong>
+                            <small>+25 Força</small>
+                        </li>
+                        <li title="Acumular ouro suficiente para comprar o reino.">
+                            <strong>Riqueza Eterna</strong>
+                            <small>+15% ouro.</small>
+                        </li>
+                        <li title="Alcançar o nível máximo do sistema.">
+                            <strong>Monarca Supremo</strong>
+                            <small>Classe Sombra</small>
+                        </li>
+                    </ul>
                 </div>
-                <button class="btn-complete" onclick="completarMissaoRepetivel('Treino Físico', 20, 5, 'vitalidade')" style="min-width: 100px;">TREINAR</button>
             </div>
-
-          <div class="shop-panel system-window" style="width: 100%;">
+        </div>
+        <div class="column" id="col-shop" style="flex: 1.1; min-width: 320px; display: flex; flex-direction: column; gap: 20px;">
+            <div class="shop-panel system-window">
                 <h1 class="window-title">LOJA DO SISTEMA</h1>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;">
-                    <button onclick="mudarAbaLoja('loja-virtual')" id="btn-aba-virtual" style="background-color: rgba(0, 210, 255, 0.2); color: #00d2ff; border: 1px solid #00d2ff; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s;">Itens do Sistema</button>
-                    
-                    <button onclick="mudarAbaLoja('loja-real')" id="btn-aba-real" style="background-color: transparent; color: #a855f7; border: 1px solid #a855f7; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s;">Recompensas Reais</button>
+                <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+                    <button onclick="mudarAbaLoja('loja-virtual')" id="btn-aba-virtual" style="flex: 1; padding: 8px; background: rgba(0, 210, 255, 0.2); color: #00d2ff; border: 1px solid #00d2ff; border-radius: 4px; cursor: pointer;">Virtual</button>
+                    <button onclick="mudarAbaLoja('loja-real')" id="btn-aba-real" style="flex: 1; padding: 8px; background: transparent; color: #a855f7; border: 1px solid #a855f7; border-radius: 4px; cursor: pointer;">Real</button>
                 </div>
 
-                <div id="loja-virtual" class="quest-list" style="display: flex; gap: 15px; flex-wrap: wrap;">
+               <div id="loja-virtual" class="quest-list" style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
                             <h3> Poção de Cura (P)</h3>
@@ -215,10 +200,10 @@
 
                     <div class="quest-card" style="flex: 1; min-width: 250px;">
                         <div class="quest-info">
-                            <h3> Espada Curta de Knight</h3>
+                            <h3> Espada Curta de Cavaleiro</h3>
                             <p>Arma de Elite. +5 de Força.<br>Custo: 500 Ouro</p>
                         </div>
-                        <button type="button" class="btn-complete" onclick="comprarNoBanco(1)">Comprar Espada Curta de Knight</button>
+                        <button type="button" class="btn-complete" onclick="comprarNoBanco(1)">Comprar Espada Curta do Cavaleiro</button>
                     </div>
 
                      <div class="quest-card" style="flex: 1; min-width: 250px;">
@@ -254,55 +239,45 @@
                     </div>
                 </div>
 
-                <div id="loja-real" class="quest-list" style="display: none; gap: 15px; flex-wrap: wrap;">
-                    
-                    <div class="quest-card" style="flex: 1; min-width: 250px; border-left: 4px solid #a855f7;">
-                        <div class="quest-info">
-                            <h3 style="color: #a855f7;"> 1 Hora de Elden Ring</h3>
-                            <p>Imersão total nas Terras Intermédias.<br>Custo: 300 Ouro</p>
-                        </div>
-                        <button type="button" class="btn-complete" style="color: #a855f7; border-color: #a855f7;" onclick="comprarRecompensaReal(300, '1 Hora de Elden Ring')">Resgatar</button>
-                    </div>
 
-                    <div class="quest-card" style="flex: 1; min-width: 250px; border-left: 4px solid #a855f7;">
-                        <div class="quest-info">
-                            <h3 style="color: #a855f7;"> Leitura: Solo Leveling</h3>
-                            <p>Ler capítulos sem culpa.<br>Custo: 150 Ouro</p>
-                        </div>
-                        <button type="button" class="btn-complete" style="color: #a855f7; border-color: #a855f7;" onclick="comprarRecompensaReal(150, 'Leitura: Solo Leveling')">Resgatar</button>
+                <div id="loja-real" class="quest-list" style="display: none;">
+                    <div class="quest-card" style="border-left: 4px solid #a855f7;">
+                        <div class="quest-info"><h3>1 Hora Elden Ring</h3><p>300 Ouro</p></div>
+                        <button class="btn-complete" onclick="comprarRecompensaReal(300, 'Elden Ring')">Resgatar</button>
                     </div>
-
+                    <div class="quest-card" style="border-left: 4px solid #a855f7;">
+                        <div class="quest-info"><h3>Solo Leveling</h3><p>150 Ouro</p></div>
+                        <button class="btn-complete" onclick="comprarRecompensaReal(150, 'Leitura')">Resgatar</button>
+                    </div>
                     <div class="quest-card" style="flex: 1; min-width: 250px; border-left: 4px solid #a855f7;">
                         <div class="quest-info">
                             <h3 style="color: #a855f7;"> Sessão de Roblox</h3>
-                            <p>Jogatina liberada.<br>Custo: 200 Ouro</p>
-                        </div>
+                            <p>Jogatina liberada.<br>Custo: 200 Ouro</p></div>
                         <button type="button" class="btn-complete" style="color: #a855f7; border-color: #a855f7;" onclick="comprarRecompensaReal(200, 'Sessão de Roblox')">Resgatar</button>
                     </div>
-
                 </div>
             </div>
 
-        <div style="margin: 20px 0; padding: 15px; border: 1px solid #555; background-color: #1a1a1a; border-radius: 10px; text-align: center;">
-            <h3 style="color: #4ade80; margin-bottom: 15px;">Associação de Caçadores: Portais Disponíveis</h3>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button type="button" class="btn-complete" onclick="abrirPortal('E')" style="border-color: #9ca3af; color: #9ca3af;">Portal Rank E</button>
-                <button type="button" class="btn-complete" onclick="abrirPortal('D')" style="border-color: #60a5fa; color: #60a5fa;">Portal Rank D</button>
-                <button type="button" class="btn-complete" onclick="abrirPortal('C')" style="border-color: #c084fc; color: #c084fc;">Portal Rank C</button>
+            <div class="system-window" style="border-color: #4ade80;">
+                <h3 style="color: #4ade80; text-align: center;">Associação de Caçadores</h3>
+                <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin-top: 10px;">
+                    <button class="btn-complete" onclick="abrirPortal('E')" style="border-color: #9ca3af; color: #9ca3af;">Rank E</button>
+                    <button class="btn-complete" onclick="abrirPortal('D')" style="border-color: #60a5fa; color: #60a5fa;">Rank D</button>
+                    <button class="btn-complete" onclick="abrirPortal('C')" style="border-color: #c084fc; color: #c084fc;">Rank C</button>
+                </div>
             </div>
         </div>
+    </div>
 
-    <div id="tela-masmorra" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 10, 10, 0.95); z-index: 1000; padding: 20px; color: white; text-align: center; overflow-y: auto;">
-        <h1 id="titulo-masmorra" style="color: #ef4444; text-shadow: 0 0 10px red; margin-top: 20px; font-size: 2.5em;">ZONA DE PERIGO</h1>
+    <div id="tela-masmorra" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.98); z-index: 2000; padding: 20px; overflow-y: auto;">
+        <h1 id="titulo-masmorra" style="text-align: center; color: #ef4444; font-size: 3em;">ZONA DE PERIGO</h1>
         
-        <div style="margin: 30px auto; border: 2px solid #555; padding: 20px; border-radius: 10px; max-width: 400px; background-color: #1a1a1a; box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);">
-            <h2 id="monstro-nome" style="color: #4ade80;">Goblin Saqueador</h2>
-            <p style="color: #aaa; font-size: 0.9em;">Nível: <span id="monstro-nivel">1</span></p>
-            
-            <p style="margin: 10px 0 5px 0; font-weight: bold;">HP: <span id="monstro-hp-texto">30/30</span></p>
-            <div style="width: 100%; background-color: #333; height: 15px; border-radius: 5px;">
-                <div id="monstro-hp-bar" style="width: 100%; background-color: #ef4444; height: 100%; border-radius: 5px; transition: width 0.3s;"></div>
+        <div style="max-width: 500px; margin: 20px auto; background: #111; padding: 20px; border: 1px solid #4ade80; border-radius: 10px; text-align: center;">
+            <h2 id="monstro-nome" style="color: #4ade80;">Goblin</h2>
+            <div style="width: 100%; background: #333; height: 15px; border-radius: 8px; margin: 15px 0;">
+                <div id="monstro-hp-bar" style="width: 100%; height: 100%; background: #ef4444; border-radius: 8px; transition: 0.3s;"></div>
             </div>
+            <p>HP: <span id="monstro-hp-texto">100/100</span></p>
         </div>
 
         <div style="margin: 20px auto; border: 2px solid #00d2ff; padding: 15px; border-radius: 10px; max-width: 400px; background-color: rgba(0, 210, 255, 0.1); box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);">
@@ -319,26 +294,20 @@
             </div>
         </div>
         </div>
-        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
-            <button type="button" onclick="atacarMonstro()" style="background-color: #3b82f6; color: white; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 1.1em; transition: 0.2s; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"> Atacar</button>
-            <button type="button" onclick="abrirBolsaBatalha()" style="background-color: #10b981; color: white; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 1.1em; transition: 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);"> Bolsa</button>
+
+        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+            <button onclick="atacarMonstro()" style="padding: 15px 40px; background: #3b82f6; border: none; color: white; font-weight: bold; border-radius: 5px; cursor: pointer;">ATACAR</button>
+            <button onclick="abrirBolsaBatalha()" style="padding: 15px 40px; background: #10b981; border: none; color: white; font-weight: bold; border-radius: 5px; cursor: pointer;">BOLSA</button>
         </div>
 
-        <div class="skills-container" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
-                <button onclick="conjurarHabilidade('Seta de Mana')" class="btn-skill">Seta de Mana (15 EE)</button>
-                <button onclick="conjurarHabilidade('Explosão Arcana')" class="btn-skill">Explosão Arcana (40 EE)</button>
-                <button onclick="conjurarHabilidade('Dreno de Vida')" class="btn-skill">Dreno de Vida (25 EE)</button>
+        <div class="skills-container" style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+            <button onclick="conjurarHabilidade('Seta de Mana')" class="btn-skill">Seta de Mana(15 EE)</button>
+            <button onclick="conjurarHabilidade('Explosão Arcana')" class="btn-skill">Explosão Arcana(40 EE)</button>
+            <button onclick="conjurarHabilidade('Dreno de Vida')" class="btn-skill">Dreno de Vida(25 EE)</button>
         </div>
-       
-        
-        <div id="bolsa-batalha" style="display: none; margin-top: 20px; padding: 15px; background-color: #222; border-radius: 10px; border: 1px solid #10b981;">
-            <h3 style="color: #10b981; margin-bottom: 10px; font-size: 1em;">Itens Consumíveis</h3>
-            <div id="grade-bolsa-batalha" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-                </div>
-        </div>
-        
-        <div id="log-batalha" style="margin-top: 40px; color: #d1d5db; font-style: italic; font-size: 1.2em; min-height: 50px; padding: 10px; border-left: 3px solid #3b82f6; max-width: 600px; margin-left: auto; margin-right: auto;">
-            Um Goblin de olhos vermelhos percebe a sua presença...
+
+        <div id="log-batalha" style="max-width: 600px; margin: 30px auto; background: rgba(255,255,255,0.05); padding: 15px; border-left: 4px solid #3b82f6; font-style: italic;">
+            A batalha começou...
         </div>
     </div>
 

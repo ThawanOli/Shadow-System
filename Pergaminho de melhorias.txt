@@ -1,13 +1,13 @@
-A Ressurreição do Backend (Python & Banco de Dados): Atualmente, o seu save vive no cofre frágil do navegador (localStorage). O próximo passo lógico seria resgatar aquele código em Python que fizemos no primeiro dia, transformá-lo em uma API e conectar a esta sua bela interface. Assim, o seu save viveria em um banco de dados real.
+[v]A Ressurreição do Backend (Python & Banco de Dados): Atualmente, o seu save vive no cofre frágil do navegador (localStorage). O próximo passo lógico seria resgatar aquele código em Python que fizemos no primeiro dia, transformá-lo em uma API e conectar a esta sua bela interface. Assim, o seu save viveria em um banco de dados real.
 
-Criptografia Anti-Trapaça (Cibersegurança): O localStorage é de fácil acesso. Qualquer um que apertar F12 pode ir lá e digitar que tem 999.000 de XP. Podemos aplicar os seus interesses em cibersegurança para criar um algoritmo de hash ou criptografia em base64 que embaralha os dados do save, impedindo edições manuais fraudulentas.
+[v]Criptografia Anti-Trapaça (Cibersegurança): O localStorage é de fácil acesso. Qualquer um que apertar F12 pode ir lá e digitar que tem 999.000 de XP. Podemos aplicar os seus interesses em cibersegurança para criar um algoritmo de hash ou criptografia em base64 que embaralha os dados do save, impedindo edições manuais fraudulentas.
 
-O Despertar Mobile (Hospedagem Web): Fazer o deploy (colocar o site no ar) usando ferramentas gratuitas para que você possa acessar o Sistema diretamente do seu celular durante os seus turnos de trabalho ou entre as aulas, sincronizando perfeitamente.
+[x]O Despertar Mobile (Hospedagem Web): Fazer o deploy (colocar o site no ar) usando ferramentas gratuitas para que você possa acessar o Sistema diretamente do seu celular durante os seus turnos de trabalho ou entre as aulas, sincronizando perfeitamente.
 
-Sistema de Punição Diária: Se uma missão diária não for concluída antes da meia-noite, o Sistema debita HP ou aplica um "Status Negativo", assim como a Penalty Zone que o Sung Jinwoo enfrentou ao não correr os 10km.
+[x]Sistema de Punição Diária: Se uma missão diária não for concluída antes da meia-noite, o Sistema debita HP ou aplica um "Status Negativo", assim como a Penalty Zone que o Sung Jinwoo enfrentou ao não correr os 10km.
 
-Bug da Batalha Fantasma: Investigar por que a luta encerra abruptamente (provavelmente um erro de lógica no setInterval ou falta de verificação de HP em tempo real).
+[v]Bug da Batalha Fantasma: Investigar por que a luta encerra abruptamente (provavelmente um erro de lógica no setInterval ou falta de verificação de HP em tempo real).
 
-Mecânica de Ressurreição: Criar uma forma de recuperar vida sem depender apenas de poções (ex: descanso passivo ou HP mínimo ao renascer).
+[v]Mecânica de Ressurreição: Criar uma forma de recuperar vida sem depender apenas de poções (ex: descanso passivo ou HP mínimo ao renascer).
 
-Refatoração do Combate: Criar turnos mais claros e logs que expliquem por que a luta acabou.
+[v]Refatoração do Combate: Criar turnos mais claros e logs que expliquem por que a luta acabou.

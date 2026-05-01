@@ -3,6 +3,7 @@ from flask_cors import CORS
 import sqlite3
 import json
 import hashlib
+from datetime import datetime
 
 app = Flask(__name__)
 # O CORS permite que o seu index.html converse com este servidor Python
@@ -21,13 +22,36 @@ def login():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM usuarios WHERE username = ? AND senha = ?", (username, senha))
     user = cursor.fetchone()
-    conn.close()
 
     if user:
-        return jsonify({"status": "sucesso", "mensagem": "Bem-vindo, Imperador!", "dados": {
-            "username": user[0], "nivel": user[2], "xp": user[3], "ouro": user[4]
-        }})
+        cursor.execute("SELECT data_ultima_diaria, status_punicao FROM usuarios WHERE username = ?", (username,))
+        dados_extra = cursor.fetchone()
+        
+        data_salva = dados_extra[0] if dados_extra and dados_extra[0] else ""
+        status_punicao = dados_extra[1] if dados_extra else 0
+
+        hoje = datetime.now().strftime('%Y-%m-%d')
+
+        if data_salva != hoje:
+            cursor.execute("UPDATE usuarios SET status_punicao = 1 WHERE username = ?", (username,))
+            conn.commit()
+            status_punicao = 1 
+
+        conn.close() 
+
+        return jsonify({
+            "status": "sucesso", 
+            "mensagem": "Bem-vindo, Imperador!", 
+            "dados": {
+                "username": user[0], 
+                "nivel": user[2], 
+                "xp": user[3], 
+                "ouro": user[4],
+                "status_punicao": status_punicao 
+            }
+        })
     else:
+        conn.close()
         return jsonify({"status": "erro", "mensagem": "Credenciais inválidas!"}), 401
 
 @app.route('/cadastrar', methods=['POST'])
@@ -49,47 +73,70 @@ def cadastrar():
 # ROTA 1: O JavaScript chama esta rota para GRAVAR no banco
 @app.route('/salvar', methods=['POST'])
 def salvar_estado():
-    dados_json = request.json
-    lacre_recebido = request.headers.get('X-Lacre-Integridade')
-    
-# Verifica o lacre de integridade
-    # Force a conversão para string simples, sem espaços entre os valores
-    mensagem = str(dados_json['nivel']) + str(dados_json['ouro']) + str(dados_json['xp']) + CHAVE_SECRETA
-    lacre_servidor = hashlib.sha256(mensagem.encode()).hexdigest()
-    # Se o lacre recebido for diferente do lacre gerado, significa que os dados foram corrompidos ou adulterados
-    if lacre_recebido != lacre_servidor:
-        print("TENTATIVA DE TRAPAÇA DETECTADA!")
-        return jsonify({"erro": "Integridade violada!"}), 403
     try:
+        dados = request.json
+        username = dados.get('nome') or dados.get('username')
+        
+        if not username:
+            return jsonify({"erro": "Monarca não identificado"}), 400
+
         conn = sqlite3.connect('shadow_system.db')
         cursor = conn.cursor()
-    
-        #Converte o JSON recebido em string para salvar no banco
-        dados_string = json.dumps(dados_json)
-        # Atualiza o Slot 1 com o novo estado do Monarca
-        cursor.execute('UPDATE saves SET dados = ? WHERE id = 1', (dados_string,))
-    
+
+        cursor.execute('''
+            UPDATE usuarios 
+            SET nivel = ?, xp = ?, ouro = ?, forca = ?, agilidade = ?, 
+                inteligencia = ?, vitalidade = ?, inventario = ?, data_ultima_diaria = ?
+            WHERE username = ?
+        ''', (
+            dados.get('nivel', 1), dados.get('xp', 0), dados.get('ouro', 0),
+            dados.get('forca', 10), dados.get('agilidade', 10),
+            dados.get('inteligencia', 10), dados.get('vitalidade', 10),
+            json.dumps(dados.get('inventario', [])), 
+            dados.get('data_ultima_diaria', '2026-04-30'), 
+            username
+        ))
+
         conn.commit()
         conn.close()
-        print(f" Save do Imperador (Nvl {dados_json['nivel']}) sincronizado com o Monólito.")
-        return jsonify({"mensagem": "Sincronização com o Monólito de Dados concluída."})
+        return jsonify({"status": "sucesso"})
     except Exception as e:
-        print(f"Erro ao salvar no banco: {e}")
-        return jsonify({"erro": "Falha ao salvar os dados."}), 500
+        print(f"Erro no Monólito: {e}")
+        return jsonify({"erro": str(e)}), 500
     
-# ROTA 2: O JavaScript chama esta rota ao iniciar o jogo para LER do banco
-@app.route('/carregar', methods=['GET'])
+# ROTA 2 CARREGAR
+@app.route('/carregar', methods=['POST']) 
 def carregar_estado():
+    dados = request.json
+    username = dados.get('username')
+
+    if not username:
+         return jsonify({"erro": "Monarca não identificado"}), 400
+
     conn = sqlite3.connect('shadow_system.db')
+    conn.row_factory = sqlite3.Row 
     cursor = conn.cursor()
     
-    cursor.execute('SELECT dados FROM saves WHERE id = 1')
-    save_string = cursor.fetchone()[0]
+    cursor.execute('SELECT * FROM usuarios WHERE username = ?', (username,))
+    user = cursor.fetchone()
     conn.close()
     
-    # Devolve o JSON puro para o JavaScript montar o Imperador
-    return jsonify(json.loads(save_string))
-
+    if user:
+        return jsonify({
+            "username": user["username"],
+            "nivel": user["nivel"],
+            "xp": user["xp"],
+            "ouro": user["ouro"],
+            "forca": user["forca"],
+            "agilidade": user["agilidade"],
+            "inteligencia": user["inteligencia"],
+            "vitalidade": user["vitalidade"],
+            "status_punicao": user["status_punicao"],
+            "data_ultima_diaria": user["data_ultima_diaria"],
+            "inventario": user["inventario"]
+        })
+        
+    return jsonify({"erro": "Save não encontrado no Monólito!"}), 404
 @app.route('/loja', methods=['GET'])
 def buscar_loja():
     conn = sqlite3.connect('shadow_system.db')
@@ -122,7 +169,7 @@ def comprar_item():
     cursor = conn.cursor()
 
     # 1. Busca o item e o usuário
-    cursor.execute('SELECT nome, preco FROM loja WHERE id = ?', (id_item,))
+    cursor.execute('SELECT nome, preco FROM loja WHERE id = ?', (int(id_item),))
     item = cursor.fetchone()
     cursor.execute('SELECT ouro, nivel, xp FROM usuarios WHERE username = ?', (username,))
     user_data = cursor.fetchone()
@@ -145,8 +192,8 @@ def comprar_item():
     import json
     import hashlib
     dados_hash = {"nivel": user_data[1], "ouro": novo_ouro, "xp": user_data[2]}
-    conteudo_json = json.dumps(dados_hash, sort_keys=True)
-    novo_hash = hashlib.sha256(conteudo_json.encode()).hexdigest()
+    mensagem = str(user_data[1]) + str(novo_ouro) + str(user_data[2]) + CHAVE_SECRETA
+    novo_hash = hashlib.sha256(mensagem.encode()).hexdigest()
 
     conn.commit()
     conn.close()
@@ -167,32 +214,52 @@ def completar_missao():
     ouro_ganho = dados.get('ouro')
     atributo = dados.get('atributo')
 
-    if not username:
-        return jsonify({"mensagem": "Nome de usuario ausente!"}), 400
-    
+    atributos_validos = ["forca", "inteligencia", "agilidade", "vitalidade"]
+    if atributo not in atributos_validos:
+        return jsonify({"mensagem": "Atributo inválido!"}), 400
+
     conn = sqlite3.connect('shadow_system.db')
     cursor = conn.cursor()
 
-    # Atualiza Ouro e XP (E o atributo se a coluna existir no seu SQL)
     try:
-        query = f"UPDATE usuarios SET xp = xp + ?, ouro = ouro + ?, {atributo} = {atributo} + 1 WHERE username = ?"
-        cursor.execute(query, (xp_ganho, ouro_ganho, username))
+        hoje = datetime.now().strftime('%Y-%m-%d')
+        # agora zera a punição e atualiza a data da última diária
+        query = f"UPDATE usuarios SET xp = xp + ?, ouro = ouro + ?, {atributo} = {atributo} + 1, status_punicao = 0, data_ultima_diaria = ? WHERE username = ?"
+        cursor.execute(query, (xp_ganho, ouro_ganho, hoje, username))
         conn.commit()
-        
-        cursor.execute('SELECT xp, ouro FROM usuarios WHERE username = ?', (username,))
+        cursor.execute('SELECT nivel, xp, ouro FROM usuarios WHERE username = ?', (username,))
         atualizado = cursor.fetchone()
-        if atualizado is None:
-            conn.close()
-            return jsonify({"mensagem": "Usuario nao encontrado no banco"}), 404
+        
+        user_nivel = atualizado[0]
+        novo_xp = atualizado[1]
+        novo_ouro = atualizado[2]
 
-        # Se o código passar daqui, o Python garante que 'atualizado' tem dados.
-        novo_xp = atualizado[0]
-        novo_ouro = atualizado[1]
+        mensagem = str(user_nivel) + str(novo_ouro) + str(novo_xp) + CHAVE_SECRETA
+        hash_missao = hashlib.sha256(mensagem.encode()).hexdigest()
+
         conn.close()
-        return jsonify({"status": "sucesso", "xp": novo_xp, "ouro": novo_ouro}), 200
+        return jsonify({"status": "sucesso", "xp": novo_xp, "ouro": novo_ouro, "novo_hash": hash_missao})
     except Exception as e:
         conn.close()
-        return jsonify({"mensagem": f"Erro no banco: {str(e)}"}), 500
+        return jsonify({"mensagem": str(e)}), 500
+    
+# ROTA Limpa punicao
+@app.route('/limpar_punicao', methods=['POST'])
+def limpar_punicao():
+    dados = request.json
+    username = dados.get('username')
+    
+    # Grava o dia de hoje, para o Sistema não te punir de novo ao recarregar
+    hoje = datetime.now().strftime('%Y-%m-%d')
+    conn = sqlite3.connect('shadow_system.db')
+    cursor = conn.cursor()
+    
+    # Zera a punição e atualiza a data
+    cursor.execute("UPDATE usuarios SET status_punicao = 0, data_ultima_diaria = ? WHERE username = ?", (hoje, username))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"status": "sucesso", "mensagem": "Punição revogada. O Sistema reconhece sua sobrevivência."})
 
 # DESPERTAR DO SISTEMA
 
@@ -241,13 +308,15 @@ def iniciar_banco():
     if cursor.fetchone()[0] == 0:
         itens = [
            # Armas e Defesa
-            (1, 'Espada Curta de Knight', 500, '+5 de Força', 'arma'),
+            (1, 'Espada Curta do Cavaleiro', 500, '+5 de Força', 'arma'),
             (2, 'Escudo de Madeira', 400, '+4 de Defesa', 'armadura'),
             (3, 'Armadura de Couro de Sombra', 1200, '+10 de Defesa', 'armadura'),
             (5, 'Adaga Enferrujada', 100, '+2 de Agilidade (Ataque Rápido)', 'arma'),
             
             # Consumíveis (Efeitos Distintos)
             (4, 'Poção de Cura (P)', 30, 'Recupera 30 de HP', 'pocao'),
+            (9, 'Poção de Cura (M)', 80, 'Recupera 150 de HP', 'pocao'),
+            (10, 'Poção de Cura (G)', 200, 'Recupera 500 de HP', 'pocao'),
             (6, 'Poção de Vitalidade', 150, 'Recupera 100 de HP + Buff de Resistência', 'pocao'),
             
             # Utilitários e Mágicos
