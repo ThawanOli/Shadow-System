@@ -2,12 +2,41 @@
 
 [v]Criptografia Anti-Trapaça (Cibersegurança): O localStorage é de fácil acesso. Qualquer um que apertar F12 pode ir lá e digitar que tem 999.000 de XP. Podemos aplicar os seus interesses em cibersegurança para criar um algoritmo de hash ou criptografia em base64 que embaralha os dados do save, impedindo edições manuais fraudulentas.
 
-[x]O Despertar Mobile (Hospedagem Web): Fazer o deploy (colocar o site no ar) usando ferramentas gratuitas para que você possa acessar o Sistema diretamente do seu celular durante os seus turnos de trabalho ou entre as aulas, sincronizando perfeitamente.
+[v]Configurar a segurança de novo dps.
 
-[x]Sistema de Punição Diária: Se uma missão diária não for concluída antes da meia-noite, o Sistema debita HP ou aplica um "Status Negativo", assim como a Penalty Zone que o Sung Jinwoo enfrentou ao não correr os 10km.
+[V]O Despertar Mobile (Hospedagem Web): Fazer o deploy (colocar o site no ar) usando ferramentas gratuitas para que você possa acessar o Sistema diretamente do seu celular durante os seus turnos de trabalho ou entre as aulas, sincronizando perfeitamente.
+
+[v]Sistema de Punição Diária: Se uma missão diária não for concluída antes da meia-noite, o Sistema debita HP ou aplica um "Status Negativo", assim como a Penalty Zone que o Sung Jinwoo enfrentou ao não correr os 10km.
 
 [v]Bug da Batalha Fantasma: Investigar por que a luta encerra abruptamente (provavelmente um erro de lógica no setInterval ou falta de verificação de HP em tempo real).
 
 [v]Mecânica de Ressurreição: Criar uma forma de recuperar vida sem depender apenas de poções (ex: descanso passivo ou HP mínimo ao renascer).
 
 [v]Refatoração do Combate: Criar turnos mais claros e logs que expliquem por que a luta acabou.
+
+[V]Adição de skills que escalam com força e agilidade. Rework nos multiplicadores das skills
+
+[v]Adição de APIs 
+Ideia 1: A API da "Meteorologia da Mente" (Quotes/Filosofia)
+O que faz: Toda vez que o Imperador faz login, o sistema bate em uma API de frases (como a ZenQuotes API ou Animechan API para frases de animes) e exibe um pensamento estoico ou de um grande personagem.
+A Mecânica: Você ganha um "Buff Mental" diário (+5 de Inteligência nas próximas 2 horas) se ler a frase e clicar em "Absorver Conhecimento".
+
+[v]Ideia 2: A API do Mundo Capitalista (Finanças/Mercado)
+O que faz: Já que você domina a arte de gerenciar cotas e acumular patrimônio através de fundos imobiliários e Tesouro Direto, podemos usar a HG Brasil Finance API ou Alpha Vantage.
+A Mecânica: O preço dos itens na sua Loja do Sistema oscila levemente com base no índice IFIX (fundos imobiliários) real ou na taxa Selic do dia. Se o mercado real estiver em alta, a "Armadura de Couro" fica mais cara. Se estiver em baixa, você tem desconto!
+
+[v]Adicionar drops de itens nos mobs.
+
+[v]Otimização do inventario, itens com o msm nome aparecer a quantidade invés de várias vezes.
+
+[v]Adição de uma aba de status detalhada, tipo chance de critico, esquiva, etc
+
+[v]Desenvolver melhor o drop de itens, principalmente a poeira estelar
+
+[x]Desenvolver melhor o despertar e avanço de classes. Com isso adicionar novas skills separadas por classes e efeitos passivos por classes tbm
+
+[x]Desenvolver skills para os inimigos. Fazer melhor
+
+[x] Lançar a nova versão
+
+[x] Arrumar o layout mobile
