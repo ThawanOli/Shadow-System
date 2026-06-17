@@ -4,30 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shadow System: Arise</title>
-    <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Michroma&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Michroma&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <div id="login-overlay">
-        <div style="background: #1a1a1a; padding: 30px; border-radius: 10px; border: 1px solid #333; text-align: center; width: 300px; margin: 100px auto;">
-            <h2 style="color: #4a90e2; margin-bottom: 20px;">Shadow System</h2>
-            <section id="sessao-login">
-                <h2>Entrar no Império</h2>
-                <form id="form-login" onsubmit="event.preventDefault(); entrarNoReino();">
-                    <input type="text" id="login-user" placeholder="Usuário" required>
-                    <input type="password" id="login-pass" placeholder="Senha" required>
-                    <button type="submit">Entrar</button>
-                </form>
-            </section>
-            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #333;">
-            <section id="sessao-cadastro">
-                <h2>Fundar Novo Império</h2>
-                <form id="form-cadastro" onsubmit="event.preventDefault(); cadastrarNoReino();">
-                    <input type="text" id="reg-user" placeholder="Nome de Imperador" required>
-                    <input type="password" id="reg-pass" placeholder="Senha" required>
-                    <button type="submit">Cadastrar</button>
-                </form>
-            </section>
+   <div id="login-overlay" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div id="caixa-autenticacao" style="background: #1a1a1a; padding: 30px; border-radius: 10px; border: 1px solid #333; text-align: center; width: 320px;">
+            <h2 id="titulo-portal" style="color: #4a90e2; margin-bottom: 20px;">Shadow System</h2>
+            
+            <div id="sessao-login">
+                <h3 style="color: #ccc; font-size: 0.9em; margin-bottom: 15px;">ENTRAR NO IMPÉRIO</h3>
+                <input type="text" id="login-user" placeholder="Usuário" style="width: 100%; margin-bottom: 10px; padding: 8px;">
+                
+                <div style="position: relative; margin-bottom: 15px;">
+                    <input type="password" id="login-pass" placeholder="Senha" style="width: 100%; padding: 8px; padding-right: 35px;">
+                    <i class="fa-solid fa-eye" id="toggle-login-pass" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;" 
+                       onclick="alternarVisaoSenha('login-pass', 'toggle-login-pass')"></i>
+                </div>
+
+                <button class="btn-complete" onclick="entrarNoReino()" style="width: 100%; margin-bottom: 10px;">Logar no Sistema</button>
+                <p style="color: #888; font-size: 0.8em; cursor: pointer;" onclick="alternarModo(true)">Não tem conta? Fundar Novo Império</p>
+            </div>
+
+            <div id="sessao-cadastro" style="display: none;">
+                <h3 style="color: #b366ff; font-size: 0.9em; margin-bottom: 15px;">FUNDAR NOVO IMPÉRIO</h3>
+                <input type="text" id="reg-user" placeholder="Nome de Imperador" style="width: 100%; margin-bottom: 10px; padding: 8px;">
+                
+                <div style="position: relative; margin-bottom: 10px;">
+                    <input type="password" id="reg-pass" placeholder="Senha" style="width: 100%; padding: 8px; padding-right: 35px;">
+                    <i class="fa-solid fa-eye" id="toggle-reg-pass" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;" 
+                       onclick="alternarVisaoSenha('reg-pass', 'toggle-reg-pass')"></i>
+                </div>
+
+                <div style="position: relative; margin-bottom: 15px;">
+                    <input type="password" id="reg-confirm-pass" placeholder="Confirmar Senha" style="width: 100%; padding: 8px; padding-right: 35px;">
+                    <i class="fa-solid fa-eye" id="toggle-confirm-pass" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;" 
+                       onclick="alternarVisaoSenha('reg-confirm-pass', 'toggle-confirm-pass')"></i>
+                </div>
+
+                <button class="btn-complete" onclick="cadastrarNoReino()" style="width: 100%; margin-bottom: 10px; background: #4a2377;">Reivindicar Trono</button>
+                <p style="color: #888; font-size: 0.8em; cursor: pointer;" onclick="alternarModo(false)">Já possui um título? Voltar ao Login</p>
+            </div>
         </div>
     </div>
 
@@ -36,19 +57,19 @@
         <div class="column" id="col-status" style="flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 20px;">
             <div class="status-panel system-window">
                 <h1 class="window-title">STATUS DO JOGADOR</h1>
-                <div class="player-info">
-                    <h2>Nome: <span class="highlight" id="player-nome"></span></h2>
-                    <h2>Título: <span class="highlight" id="player-titulo" style="color: #a855f7; font-variant: small-caps; text-transform: none;"></span></h2>
-                    <h2>Nível: <span class="highlight" id="player-level">1</span></h2>
-                    <h2>Ouro: <span class="highlight" id="player-ouro">0</span></h2>
+               <div class="player-info">
+                    <h2>Nome: <span id="player-nome" class="nome-neon">Kaiser</span></h2>
+                    <h2>Título: <span id="player-titulo" class="titulo-neon">O MAIS FRACO</span></h2>
+                    <h2> Nível: <span id="player-level" class="highlight">1</span></h2>
+                    <h2> Ouro: <span id="player-ouro" class="highlight">0</span></h2>
                 </div>
 
                 <div class="bars-container">
-                    <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">HP: <span id="player-hp">100/100</span></p>
+                    <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">NV: <span id="player-hp">100/100</span></p>
                     <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
                         <div id="hp-bar" style="width: 100%; background-color: #ff3333; height: 100%; border-radius: 5px;"></div>
                     </div>
-                    <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">MP: <span id="player-mp">50/50</span></p>
+                    <p style="margin: 5px 0; font-weight: bold; font-size: 0.9em;">EE: <span id="player-mp">50/50</span></p>
                     <div style="width: 100%; background-color: #333; height: 10px; border-radius: 5px; margin-bottom: 10px;">
                         <div id="mp-bar" style="width: 100%; background-color: #3366ff; height: 100%; border-radius: 5px;"></div>
                     </div>
@@ -69,10 +90,24 @@
                     </ul>
                 </div>
 
-                <div class="titles-panel" style="margin-top: 20px; border-top: 1px solid #333; padding-top: 10px;">
-                    <h3>Títulos Equipáveis</h3>
-                    <select id="select-titulo" onchange="equiparTitulo(this.value)" style="width: 100%; background: #111; color: #a855f7; border: 1px solid #a855f7; padding: 5px; border-radius: 5px;"></select>
-                    <p id="titulo-desc" style="font-size: 0.75rem; color: #a855f7; margin-top: 5px;"></p>
+                <div id="status-detalhados" style="margin-top: 15px; padding: 10px; border: 1px solid #444;">
+                    <h4>Atributos Secundários</h4>
+                    <p>Taxa Crítica: <span id="status-critico">5%</span></p>
+                    <p>Esquiva: <span id="status-esquiva">2%</span></p>
+                    <p>Poder Físico: <span id="status-poder-fisico">10</span></p>
+                </div>
+
+                <div id="altar-despertar" style="margin-top: 20px; text-align: center;">
+                    <button id="btn-despertar" onclick="tentarDespertar()"> Iniciar Despertar (Requer 10 Fragmentos)</button>
+                </div>
+
+                <div class="titles-panel" style="margin-top: 20px; padding: 10px; border: 1px solid #333; border-radius: 5px; background: rgba(0, 0, 0, 0.3);">
+                    <h3 style="color: #b366ff; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase;">Mudar Título Imperial</h3>
+                    <select id="select-titulo" onchange="equiparTitulo(this.value)" style="width: 100%; background: #111; color: #b366ff; border: 1px solid #b366ff; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                        <!-- As opções serão injetadas pelo JS -->
+                    </select>
+                    
+                    <p id="titulo-desc" style="font-size: 0.7rem; color: #888; margin-top: 8px; font-style: italic;">Selecione um título para ver o efeito...</p>
                 </div>
 
                 <div style="border-top: 1px dashed #00d2ff; padding-top: 10px; margin-top: 10px;">
@@ -89,6 +124,15 @@
                         <p style="color: #555; font-size: 0.9em;">A bolsa está vazia.</p>
                     </div>
                 </div>
+
+                <div class="system-window" style="margin-top: 20px;">
+                    <h3 style="color: #ffd700; text-align: center; border-bottom: 1px solid #ffd700; padding-bottom: 5px;">🪙 Oráculo Global</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
+                        <p style="margin: 0; font-size: 0.9em;"> Dólar: <span id="cotacao-dolar" style="color: #00b3ff;">Consultando...</span></p>
+                        <p style="margin: 0; font-size: 0.9em;"> Bitcoin: <span id="cotacao-bitcoin" style="color: #00b3ff;">Consultando...</span></p>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -96,33 +140,34 @@
             <div class="quest-panel system-window">
                 <h1 class="window-title">MISSÕES DIÁRIAS</h1>
                 <div class="quest-list">
-                    <div class="quest-card">
-                        <div class="quest-info">
-                            <h3>[C] Treino de Força</h3>
-                            <p>40 XP | 10 Ouro | +1 Força</p>
+
+                    <div class="system-window" style="margin-bottom: 20px; border: 1px dashed #00b3ff; padding: 15px;">
+                        <h4 style="color: #00b3ff; margin-top: 0; text-align: center;"> Forjar Nova Missão</h4>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+
+                            <input type="text" id="nova-missao-nome" placeholder="Ex: Estudar Python por 1 hora..." 
+                                style="padding: 10px; border-radius: 5px; background: #111; color: #fff; border: 1px solid #333; font-family: inherit;">
+
+                            <select id="nova-missao-atributo" 
+                                    style="padding: 10px; border-radius: 5px; background: #111; color: #00b3ff; border: 1px solid #333; font-weight: bold; cursor: pointer;">
+                                <option value="" disabled selected>Escolha o Atributo Alvo...</option>
+                                <option value="Força"> Força</option>
+                                <option value="Agilidade"> Agilidade</option>
+                                <option value="Inteligência"> Inteligência</option>
+                                <option value="Vitalidade"> Vitalidade</option>
+                            </select>
+
+                            <!-- Botão de Invocação -->
+                            <button onclick="prepararNovaMissao()" 
+                                    style="padding: 10px; background-color: #00b3ff; color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase;">
+                                Adicionar ao Sistema
+                            </button>
                         </div>
-                        <button id="btn-treino_forca" class="btn-complete" onclick="completarMissao('treino_forca', 40, 10, 'forca', this)">Completar</button>
                     </div>
-                    <div class="quest-card">
-                        <div class="quest-info">
-                            <h3>[C] Treino de Agilidade</h3>
-                            <p>40 XP | 10 Ouro | +1 Agilidade</p>
-                        </div>
-                        <button id="btn-treino_agilidade" class="btn-complete" onclick="completarMissao('treino_agilidade', 40, 10, 'agilidade', this)">Completar</button>
-                    </div>
-                    <div class="quest-card">
-                        <div class="quest-info">
-                            <h3>[B] Controle Mente e Corpo</h3>
-                            <p>60 XP | 20 Ouro | +1 Vitalidade</p>
-                        </div>
-                        <button id="btn-controle_mente" class="btn-complete" onclick="completarMissao('controle_mente', 60, 20, 'vitalidade', this)">Completar</button>
-                    </div>
-                    <div class="quest-card">
-                        <div class="quest-info">
-                            <h3>[B] Projeto de Python</h3>
-                            <p>60 XP | 20 Ouro | +1 Inteligência</p>
-                        </div>
-                        <button id="btn-projeto_python" class="btn-complete" onclick="completarMissao('projeto_python', 60, 20, 'inteligencia', this)">Completar</button>
+                        <!-- O JS vai jogar elas nesse alvo -->
+                    <div id="lista-missoes-dinamica" style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- As missões aparecerão aqui... -->
                     </div>
                 </div>
             </div>
@@ -134,15 +179,11 @@
                 </div>
                 <button class="btn-complete" onclick="completarMissaoRepetivel('Treino Físico', 20, 5, 'vitalidade')">TREINAR</button>
             </div>
-        
-
-            <div class="quest-card elite" style="border: 1px solid #a855f7; background: rgba(168, 85, 247, 0.05); padding: 15px; border-radius: 8px;">
-                <h3 style="color: #a855f7; margin: 0;">CONQUISTA: CARNICEIRO DE PORTAIS</h3>
-                <p style="font-size: 0.8rem; color: #eee; margin: 5px 0;">Abater 100 monstros nas masmorras.</p>
-                <div style="width: 100%; background: #111; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #333;">
-                    <div id="prog-monstros" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6d28d9, #a855f7); transition: width 0.5s;"></div>
-                </div>
-                <span id="status-monstros" style="display: block; text-align: right; font-size: 0.75rem; color: #aaa; margin-top: 5px;">0 / 100</span>
+            
+            <div class="system-window" style="margin-top: 20px; text-align: center;">
+                <h3 style="color: #b366ff; border-bottom: 1px solid #b366ff; padding-bottom: 5px;"> A Meteorologia da Mente</h3>
+                <p id="frase-diaria" style="font-style: italic; color: #ddd; margin-top: 15px;">"Sintonizando as vozes do universo..."</p>
+                <p id="autor-frase" style="color: #b366ff; font-weight: bold; font-size: 0.9em; text-align: right; margin-top: 10px;">- Oráculo</p>
             </div>
 
             <div class="achievements-panel system-window">
@@ -277,7 +318,7 @@
             <div style="width: 100%; background: #333; height: 15px; border-radius: 8px; margin: 15px 0;">
                 <div id="monstro-hp-bar" style="width: 100%; height: 100%; background: #ef4444; border-radius: 8px; transition: 0.3s;"></div>
             </div>
-            <p>HP: <span id="monstro-hp-texto">100/100</span></p>
+            <p>NV: <span id="monstro-hp-texto">100/100</span></p>
         </div>
 
         <div style="margin: 20px auto; border: 2px solid #00d2ff; padding: 15px; border-radius: 10px; max-width: 400px; background-color: rgba(0, 210, 255, 0.1); box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);">
@@ -301,9 +342,19 @@
         </div>
 
         <div class="skills-container" style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-            <button onclick="conjurarHabilidade('Seta de Mana')" class="btn-skill">Seta de Mana(15 EE)</button>
-            <button onclick="conjurarHabilidade('Explosão Arcana')" class="btn-skill">Explosão Arcana(40 EE)</button>
-            <button onclick="conjurarHabilidade('Dreno de Vida')" class="btn-skill">Dreno de Vida(25 EE)</button>
+            <button onclick="conjurarHabilidade('Seta de Mana')" class="btn-skill-i">Seta de Mana(15 EE)</button>
+            <button onclick="conjurarHabilidade('Explosão Arcana')" class="btn-skill-i">Explosão Arcana(40 EE)</button>
+            <button onclick="conjurarHabilidade('Dreno de Vida')" class="btn-skill-i">Dreno de Vida(25 EE)</button>
+            <button onclick="conjurarHabilidade('Golpe Devastador')" class="btn-skill-f">Golpe Devastador (20 EE)</button>
+            <button onclick="conjurarHabilidade('Golpe do Dragão')" class="btn-skill-f">Golpe do Dragão (45 EE)</button>
+            <button onclick="conjurarHabilidade('Corte Fantasma')" class="btn-skill-a">Corte Fantasma (18 EE)</button>
+            <button onclick="conjurarHabilidade('Dança das Lâminas')" class="btn-skill-a">Dança das Lâminas (35 EE)</button>
+        </div>
+
+        <div id="bolsa-batalha" style="display: none; margin-top: 15px; background: rgba(15, 23, 42, 0.9); padding: 10px; border: 1px solid #a855f7; border-radius: 8px;">
+            <h4 style="color: #a855f7; margin-bottom: 10px; text-align: center;"> Bolsa Rápida</h4>
+            <div id="grade-bolsa-batalha" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+            </div>
         </div>
 
         <div id="log-batalha" style="max-width: 600px; margin: 30px auto; background: rgba(255,255,255,0.05); padding: 15px; border-left: 4px solid #3b82f6; font-style: italic;">

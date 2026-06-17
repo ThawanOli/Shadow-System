@@ -156,12 +156,95 @@ body {
 #attr-inteligencia { color: #a855f7; text-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
 #attr-vitalidade { color: #00d2ff; text-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
 
+#status-detalhados {
+    background-color: rgba(0, 20, 40, 0.6);
+    border: 1px solid #00f0ff;
+    border-radius: 5px;
+    padding: 12px;
+    margin-top: 15px;
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+#status-detalhados h4 {
+    color: #00f0ff;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 12px;
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9em;
+}
+
+#status-detalhados p {
+    display: flex;
+    justify-content: space-between; 
+    margin: 6px 0;
+    font-size: 0.85em;
+    color: #b3d4d6;
+    border-bottom: 1px dashed rgba(0, 240, 255, 0.3);
+    padding-bottom: 3px;
+}
+
+#status-detalhados p span {
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+#btn-despertar {
+    background: linear-gradient(45deg, #0f0f1a, #2a004d);
+    color: #d4a1ff;
+    border: 2px solid #6600cc;
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(102, 0, 204, 0.5), inset 0 0 15px rgba(0, 0, 0, 0.8);
+    transition: all 0.4s ease;
+    letter-spacing: 2px;
+}
+
+#btn-despertar:hover {
+    background: linear-gradient(45deg, #1a0033, #4d0099);
+    color: #ffffff;
+    border-color: #9933ff;
+    box-shadow: 0 0 20px rgba(153, 51, 255, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.2);
+    text-shadow: 0 0 8px #ffffff;
+    transform: scale(1.05); /* Fica um pouco maior ao passar o mouse */
+}
+
+h2 {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    color: white;
+    margin-bottom: 10px;
+}
+
 h3 {
     font-family: 'Michroma', sans-serif;
     font-size: 0.85rem;
     letter-spacing: 1px;
     color: #a855f7;
     margin-bottom: 8px;
+}
+
+.nome-neon {
+    color: #00d2ff !important;
+    text-shadow: 0 0 10px #00d2ff, 0 0 20px #00d2ff;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Brilho Neon para o Título (Roxo) */
+.titulo-neon {
+    color: #b366ff !important;
+    text-shadow: 0 0 10px #b366ff, 0 0 20px #b366ff;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: 'Orbitron', sans-serif;
 }
 
 /* Estilo do Título Equipado no Topo */
@@ -342,6 +425,36 @@ h3 {
     font-size: 0.8rem;
 }
 
+/* --- ITENS DA BOLSA DE BATALHA --- */
+#grade-bolsa-batalha button {
+    background: linear-gradient(145deg, rgba(15, 15, 30, 0.9), rgba(25, 25, 45, 0.9));
+    border: 1px solid #b366ff; 
+    color: #e0e0e0;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 0 5px rgba(179, 102, 255, 0.1), 0 0 8px rgba(179, 102, 255, 0.3);
+}
+
+#grade-bolsa-batalha button:hover {
+    background: linear-gradient(145deg, rgba(30, 30, 60, 0.9), rgba(40, 40, 80, 0.9));
+    border-color: #00f0ff; 
+    color: #ffffff;
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2), 0 0 15px rgba(0, 240, 255, 0.6);
+    transform: translateY(-2px); /* O botão "pula" levemente para cima */
+}
+
+#grade-bolsa-batalha button:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+}
+
+
 /* Cartões de Missão */
 .quest-list {
     display: flex;
@@ -471,7 +584,7 @@ h3 {
     background: #1e90ff;
     border-radius: 10px;
 }
-.btn-skill {
+.btn-skill-i {
     background: linear-gradient(135deg, #6d28d9, #4c1d95); /* Roxo Arcano */
     color: white;
     border: 1px solid #8b5cf6;
@@ -483,11 +596,41 @@ h3 {
     text-shadow: 0 0 5px #a78bfa;
 }
 
-.btn-skill:hover {
+.btn-skill-i:hover {
     box-shadow: 0 0 15px #8b5cf6;
     transform: translateY(-2px);
 }
 
+.btn-skill-f {
+    background: linear-gradient(135deg, #ff4444, #b91c1c); /* Vermelho Flamejante */
+    color: white;
+    border: 1px solid #ff6f6f;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+    text-shadow: 0 0 5px #ff6f6f;
+}
+.btn-skill-f:hover {
+    box-shadow: 0 0 15px #ff6f6f;
+    transform: translateY(-2px);
+}
+.btn-skill-a {
+    background: linear-gradient(135deg, #4ade80, #16a34a); /* Verde Ágil */
+    color: white;
+    border: 1px solid #86efac;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+    text-shadow: 0 0 5px #86efac;
+}
+.btn-skill-a:hover {
+    box-shadow: 0 0 15px #86efac;
+    transform: translateY(-2px);
+}
 .alerta-sistema-vermelho {
     position: fixed;
     top: 50%;
@@ -523,4 +666,27 @@ h3 {
 .alerta-sistema-vermelho button:hover {
     background-color: #ff4444;
     color: black;
+}
+
+   /*  MOBILE  */
+
+@media screen and (max-width: 768px) {
+    .system-container {
+        flex-direction: column !important;
+        padding: 10px !important;
+        gap: 20px !important;
+    }
+
+    .column {
+        width: 100% !important;
+        min-width: 100% !important; 
+        margin-bottom: 20px;
+    }
+
+    button, .btn-complete {
+        padding: 15px;
+        font-size: 1.1em;
+        width: 100%;
+        margin-top: 5px;
+    }
 }
