@@ -57,7 +57,7 @@ class Monarca {
         inventario: this.inventario,
       };
       const seloImperial = localStorage.getItem("selo_imperial");
-      const resposta = await fetch("/http://localhost:5000/salvar", {
+      const resposta = await fetch("http://localhost:5000/salvar", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2144,8 +2144,10 @@ async function prepararNovaMissao() {
 
       const resultado = await resposta.json();
       if (resposta.ok) {
+        console.log(resultado.mensagem);
+        document.getElementById("nova-missao-nome").value = "";
+        carregarMissoesDiarias();
         alert(resultado.mensagem);
-        location.reload(); // Recarrega para mostrar a nova missão
       } else {
         alert("Falha do Sistema: " + resultado.mensagem);
       }
@@ -2218,7 +2220,7 @@ function renderizarMissoesNaTela(missoes) {
 }
 
 async function adicionarProgressoConquista(codigo, valor) {
-    const token = localStorage.getItem("token_shadow");
+    const token = localStorage.getItem("selo_imperial");
     const usuario = localStorage.getItem("usuario_shadow");
 
     if (!token || !usuario) return;
@@ -2247,7 +2249,7 @@ async function adicionarProgressoConquista(codigo, valor) {
 }
 
 async function carregarConquistasDoBanco() {
-    const token = localStorage.getItem("token_shadow");
+    const token = localStorage.getItem("selo_imperial");
     const usuario = localStorage.getItem("usuario_shadow");
     
     if (!usuario) return;
@@ -2400,7 +2402,7 @@ async function invocarMeteorologia() {
 
 // carregamundo
 async function carregarMundo() {
-  const token = localStorage.getItem("token_shadow");
+  const token = localStorage.getItem("selo_imperial");
     const usuario = localStorage.getItem("usuario_shadow");
     if (!token || !usuario) {
         return;
